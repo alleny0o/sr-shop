@@ -17,7 +17,7 @@ const createVariantMediasWorkflow = createWorkflow("create-variant-medias-workfl
   createRemoteLinkStep({ variant_medias: created_variant_medias });
 
   return new WorkflowResponse({
-    medias: created_variant_medias,
+    variant_medias: created_variant_medias,
   });
 });
 

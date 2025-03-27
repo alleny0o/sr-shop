@@ -4,7 +4,7 @@ import { validateAndTransformBody, validateAndTransformQuery } from "@medusajs/f
 import { createFindParams } from "@medusajs/medusa/api/utils/validators";
 
 // schemas
-import { deleteFilesSchema } from "./validation-schemas";
+import { createVariantMediasSchema, deleteFilesSchema } from "./validation-schemas";
 
 // multer
 import multer from "multer";
@@ -23,6 +23,13 @@ export default defineMiddlewares({
         matcher: "/admin/file-manager",
         method: "DELETE",
         middlewares: [validateAndTransformBody(deleteFilesSchema)],
+    },
+
+    // ----- /admin/product-variant_medias -----
+    {
+      matcher: '/admin/product-variant_medias',
+      method: 'POST',
+      middlewares: [validateAndTransformBody(createVariantMediasSchema)],
     },
   ],
 });
