@@ -70,14 +70,14 @@ export const useEditMediaModal = (
   setMedias: (medias: Media[]) => void
 ) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [editedMedias, setEditedMedias] = useState<Media[]>(initialMedias);
+  const [editedVariantMedias, setEditedVariantMedias] = useState<Media[]>(initialMedias);
   const [showConfirmPrompt, setShowConfirmPrompt] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setEditedMedias(initialMedias);
+        setEditedVariantMedias(initialMedias);
     }
   }, [isOpen, initialMedias]);
 
@@ -89,13 +89,13 @@ export const useEditMediaModal = (
     setIsSaving(true);
 
     try {
-      if (areMediasEqual(initialMedias, editedMedias)) {
+      if (areMediasEqual(initialMedias, editedVariantMedias)) {
         toast.success("Media was successfully updated.");
         setIsOpen(false);
         return;
       }
 
-      const finalMedias = await processNewFileUploads(editedMedias, variantId, productId);
+      const finalMedias = await processNewFileUploads(editedVariantMedias, variantId, productId);
       await handleMediaDeletions(initialMedias, finalMedias);
       await updateVariantMedias(finalMedias, variantId);
 
@@ -109,33 +109,33 @@ export const useEditMediaModal = (
     } finally {
       setIsSaving(false);
     }
-  }, [areMediasEqual, initialMedias, editedMedias, setMedias, variantId, productId]);
+  }, [areMediasEqual, initialMedias, editedVariantMedias, setMedias, variantId, productId]);
 
   const handleCancel = useCallback(() => {
-    if (areMediasEqual(initialMedias, editedMedias)) {
+    if (areMediasEqual(initialMedias, editedVariantMedias)) {
       setIsOpen(false);
     } else {
       setShowConfirmPrompt(true);
     }
-  }, [areMediasEqual, initialMedias, editedMedias]);
+  }, [areMediasEqual, initialMedias, editedVariantMedias]);
 
   const confirmCancel = useCallback(async () => {
     try {
-      await deleteUnsavedMedias(initialMedias, editedMedias);
+      await deleteUnsavedMedias(initialMedias, editedVariantMedias);
     } catch (error) {
       console.error("Error deleting medias:", error);
     }
     setShowConfirmPrompt(false);
-    setEditedMedias(initialMedias);
+    setEditedVariantMedias(initialMedias);
     setIsOpen(false);
-  }, [initialMedias, editedMedias]);
+  }, [initialMedias, editedVariantMedias]);
 
   const handleDelete = useCallback((fileId: string) => {
-    setEditedMedias((medias) => medias.filter((media) => media.file_id !== fileId));
+    setEditedVariantMedias((medias) => medias.filter((media) => media.file_id !== fileId));
   }, []);
 
   const handleThumbnail = useCallback((fileId: string) => {
-    setEditedMedias((medias) =>
+    setEditedVariantMedias((medias) =>
       medias.map((media) => ({
         ...media,
         is_thumbnail: media.file_id === fileId,
@@ -146,8 +146,8 @@ export const useEditMediaModal = (
   return {
     isOpen,
     setIsOpen,
-    editedMedias,
-    setEditedMedias,
+    editedVariantMedias,
+    setEditedVariantMedias,
     showConfirmPrompt,
     setShowConfirmPrompt,
     isSaving,

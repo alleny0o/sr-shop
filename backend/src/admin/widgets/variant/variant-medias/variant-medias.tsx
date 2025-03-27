@@ -11,9 +11,6 @@ import { useQuery } from "@tanstack/react-query";
 // JS SDK
 import { sdk } from "../../../lib/config";
 
-// UI Components
-import { FaceSmile } from "@medusajs/icons";
-
 // Context
 import { VariantContext } from "./context/variant-context";
 
@@ -21,6 +18,7 @@ import { VariantContext } from "./context/variant-context";
 import { Media } from "./types";
 
 // Custom Components
+import EditMediaModal from "./modals/edit-media-modal";
 import { SectionWrapper } from "../../../components/section-wrapper";
 import { SectionLoader } from "../../../components/section-loader";
 import { SectionText } from "../../../components/section-text";
@@ -73,7 +71,7 @@ const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) =
 
   return (
     <VariantContext.Provider value={{ variant_id: data.id, product_id: data.product_id }}>
-      <SectionWrapper heading="Media">
+      <SectionWrapper heading="Media" modal={<EditMediaModal variantMedias={variantMedias} setVariantMedias={setVariantMedias} />}>
         {variantMedias.length > 0 ? (
           <div>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-4 px-6 py-4">
@@ -83,7 +81,7 @@ const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) =
             </div>
           </div>
         ) : (
-          <SectionText message="No media created for this variant. Add your first media" icon={<FaceSmile />} height={160} />
+          <SectionText message="No media created for this variant. Click edit to add your first media :)" height={160} />
         )}
       </SectionWrapper>
     </VariantContext.Provider>

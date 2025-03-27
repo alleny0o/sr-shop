@@ -7,10 +7,11 @@ type ConfirmPromptProps = {
     open: boolean;
     onClose: (value: boolean) => void;
     onConfirm: () => void;
+    onCancel: () => void;
 };
 
 export const ConfirmPrompt = (input: ConfirmPromptProps) => {
-    const { title, description, open, onClose, onConfirm } = input;
+    const { title, description, open, onClose, onConfirm, onCancel } = input;
 
     return (
         <Prompt open={open} onOpenChange={onClose}>
@@ -20,7 +21,7 @@ export const ConfirmPrompt = (input: ConfirmPromptProps) => {
                     <Prompt.Description>{description}</Prompt.Description>
                 </Prompt.Header>
                 <Prompt.Footer>
-                    <Prompt.Cancel>Cancel</Prompt.Cancel>
+                    <Button size="small" variant="secondary" onClick={onCancel}>Cancel</Button>
                     <Button size="small" variant="primary" onClick={onConfirm}>
                         Continue
                     </Button>
