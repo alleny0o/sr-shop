@@ -1,4 +1,4 @@
-# 🛒🛍️✨ S&R Laserworks – Custom eCommerce Platform
+# 🛒🛍️✨ S&R Laserworks – eCommerce Platform
 
 A custom full-stack eCommerce platform built for **S&R Laserworks**, a small business known for handcrafted laser-engraved boards and puzzles.
 

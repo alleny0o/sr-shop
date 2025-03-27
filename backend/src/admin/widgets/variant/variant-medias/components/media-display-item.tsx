@@ -1,8 +1,8 @@
-// ui
+// UI Components
 import { Tooltip } from "@medusajs/ui";
 import { ThumbnailBadge } from "@medusajs/icons";
 
-// types
+// Local Types
 import { Media } from "../types";
 
 type MediaDisplayItemProps = {
