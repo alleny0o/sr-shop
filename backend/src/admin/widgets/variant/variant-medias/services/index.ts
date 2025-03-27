@@ -20,13 +20,13 @@ export const uploadMediaFiles = async (files: File[], variant_id: string, produc
         throw new Error('Failed to upload media files');
     };
 
-    const { files: uploadedFiles }: { files: FileDTO[] } = await response.json();
+    const { files: uploaded_files }: { files: FileDTO[] } = await response.json();
 
-    if (uploadedFiles.length !== files.length) {
+    if (uploaded_files.length !== files.length) {
         throw new Error("Failed to upload all media files");
     };
 
-    return uploadedFiles.map((file, index) => ({
+    return uploaded_files.map((file, index) => ({
         file_id: file.id,
         product_id: product_id,
         variant_id: variant_id,

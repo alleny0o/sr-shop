@@ -8,6 +8,7 @@ import { Media } from "../types";
 import { ConfirmPrompt } from "../../../../components/confirm-prompt";
 
 // Hooks
+import { useEditMediaModal } from "../hooks/use-edit-media-modal";
 
 // dnd-kit Imports
 
