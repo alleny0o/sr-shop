@@ -12,7 +12,6 @@ import { useQuery } from "@tanstack/react-query";
 import { sdk } from "../../../lib/config";
 
 // UI Components
-import { Badge, Container, Heading, Tooltip } from "@medusajs/ui";
 import { FaceSmile } from "@medusajs/icons";
 
 // Context
@@ -24,7 +23,7 @@ import { Media } from "./types";
 // Custom Components
 import { SectionWrapper } from "../../../components/section-wrapper";
 import { SectionLoader } from "../../../components/section-loader";
-import { SectionError } from "../../../components/section-error";
+import { SectionText } from "../../../components/section-text";
 import { MediaDisplay } from "./components/media-display";
 
 const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) => {
@@ -67,14 +66,26 @@ const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) =
 
     return (
       <SectionWrapper heading="Media">
-        <SectionError message="ERROR: Failed to load variant medias." height={160} />
+        <SectionText message="ERROR: Failed to load variant medias." height={160} />
       </SectionWrapper>
     );
   }
 
   return (
     <VariantContext.Provider value={{ variant_id: data.id, product_id: data.product_id }}>
-      <SectionWrapper heading="Media">Test</SectionWrapper>
+      <SectionWrapper heading="Media">
+        {variantMedias.length > 0 ? (
+          <div>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-4 px-6 py-4">
+              {variantMedias.map((media) => (
+                <MediaDisplay key={media.file_id} media={media} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <SectionText message="No media created for this variant. Add your first media" icon={<FaceSmile />} height={160} />
+        )}
+      </SectionWrapper>
     </VariantContext.Provider>
   );
 };
