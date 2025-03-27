@@ -5,11 +5,11 @@ import { ThumbnailBadge } from "@medusajs/icons";
 // types
 import { Media } from "../types";
 
-type MediaDisplayProps = {
+type MediaDisplayItemProps = {
     media: Media;
 };
 
-export const MediaDisplay = ({ media }: MediaDisplayProps) => {
+export const MediaDisplayItem = ({ media }: MediaDisplayItemProps) => {
     const isVideo = media.mime_type?.startsWith("video");
 
     return (

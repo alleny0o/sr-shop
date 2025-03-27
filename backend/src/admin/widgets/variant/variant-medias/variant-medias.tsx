@@ -24,7 +24,7 @@ import { Media } from "./types";
 import { SectionWrapper } from "../../../components/section-wrapper";
 import { SectionLoader } from "../../../components/section-loader";
 import { SectionText } from "../../../components/section-text";
-import { MediaDisplay } from "./components/media-display";
+import { MediaDisplayItem } from "./components/media-display-item";
 
 const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) => {
   // Variant Medias State
@@ -78,7 +78,7 @@ const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) =
           <div>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-4 px-6 py-4">
               {variantMedias.map((media) => (
-                <MediaDisplay key={media.file_id} media={media} />
+                <MediaDisplayItem key={media.file_id} media={media} />
               ))}
             </div>
           </div>

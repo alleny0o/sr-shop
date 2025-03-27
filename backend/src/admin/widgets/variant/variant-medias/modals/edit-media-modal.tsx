@@ -5,6 +5,7 @@ import { FocusModal } from "@medusajs/ui";
 import { Media } from "../types";
 
 // Custom Components
+import { ConfirmPrompt } from "../../../../components/confirm-prompt";
 
 // Hooks
 
