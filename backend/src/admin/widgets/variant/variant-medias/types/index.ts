@@ -1,4 +1,4 @@
-export type VariantMedia = {
+export type Media = {
     id?: string;
     file_id: string;
     product_id: string;
