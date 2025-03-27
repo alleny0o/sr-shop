@@ -1,6 +1,6 @@
-# 💼 Sam & Rachel's Laserworks – Custom eCommerce Platform
+# 💼 S&R Laserworks – Custom eCommerce Platform
 
-A custom full-stack eCommerce platform built for **Sam & Rachel’s Laserworks**, a small business known for handcrafted laser-engraved boards and puzzles.
+A custom full-stack eCommerce platform built for **S&R Laserworks**, a small business known for handcrafted laser-engraved boards and puzzles.
 
 This project was created to help Sam & Rachel migrate away from **Etsy** — giving them full control over their brand, user experience, and operations without the limitations or fees of marketplace platforms. Built from the ground up to fit their needs, this site empowers their creativity and scales with their growth.
 
@@ -19,6 +19,7 @@ This project was created to help Sam & Rachel migrate away from **Etsy** — giv
 | Email Workflows | Transactional and marketing emails using Resend & React Email |
 | Modular Backend | Powered by Medusa v2 modules, subscribers, workflows, and jobs |
 | Caching | Redis-backed performance layer |
+| Cloud Storage | File and image upload integration with AWS S3 |
 
 ---
 
@@ -30,7 +31,8 @@ This project was created to help Sam & Rachel migrate away from **Etsy** — giv
 | **MedusaJS v2** | Headless commerce engine (extended) | ![Medusa](https://img.shields.io/badge/MedusaJS-000000?logo=medusa&logoColor=white) |
 | **React Hook Form** | Form state management | ![RHF](https://img.shields.io/badge/React_Hook_Form-EC5990?logo=reacthookform&logoColor=white) |
 | **Zod** | Schema validation | ![Zod](https://img.shields.io/badge/Zod-3C3C3C?logo=zod&logoColor=white) |
-| **Multer** | File uploads | ![Multer](https://img.shields.io/badge/Multer-3F3F3F?logo=express&logoColor=white) |
+| **Multer** | File handling middleware | ![Multer](https://img.shields.io/badge/Multer-3F3F3F?logo=express&logoColor=white) |
+| **AWS S3** | Media storage (images, customization uploads) | ![S3](https://img.shields.io/badge/AWS_S3-FF9900?logo=amazon-aws&logoColor=white) |
 | **Redis** | In-memory data store | ![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white) |
 | **Dropzone** | Drag-and-drop file upload | ![Dropzone](https://img.shields.io/badge/Dropzone-646CFF?logo=dropbox&logoColor=white) |
 | **React Color** | Color selection tool | ![React Color](https://img.shields.io/badge/React_Color-61DAFB?logo=react&logoColor=white) |
@@ -57,7 +59,7 @@ This project was created to help Sam & Rachel migrate away from **Etsy** — giv
 
 | Layer | Stack | Notes |
 |-------|-------|-------|
-| **Backend** | MedusaJS v2, Redis, Multer, Resend | Extended with **modules**, **subscribers**, **jobs**, and **workflows** |
+| **Backend** | MedusaJS v2, Redis, Multer, AWS S3, Resend | Extended with **modules**, **subscribers**, **jobs**, and **workflows** |
 | **Frontend** | Next.js (in progress) | Will deliver a polished shopping and customization experience |
 | **Infrastructure** | Railway (backend), Vercel (frontend) | Easy deploy, auto CI/CD |
 
@@ -67,12 +69,12 @@ This project was created to help Sam & Rachel migrate away from **Etsy** — giv
 
 - Extended Medusa's backend to support:
   - Product customization forms
-  - Media management per variant & option
+  - Media management per variant & option (stored on AWS S3)
   - Product reviews
   - Custom workflows and job handlers
 - Redis-powered session and cache layer
-- Custom image handling pipeline via Multer
-- Email flow via React Email and Resend
+- Image upload & management via Multer → AWS S3
+- Email flow using React Email + Resend
 - API routes, modules, and logic using Medusa v2 standards
 
 ---
@@ -86,5 +88,3 @@ This project was created to help Sam & Rachel migrate away from **Etsy** — giv
 | Deployment | ✅ Backend on Railway, Frontend on Vercel |
 
 ---
-
-Let me know if you'd like badges (e.g., Vercel Deploy, Railway Deploy, MIT License), images, usage instructions, or contribution guidelines added next.
