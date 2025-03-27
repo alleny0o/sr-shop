@@ -1,4 +1,4 @@
-// ui
+// UI Components
 import { Container, Heading, Tooltip } from "@medusajs/ui";
 import { InformationCircle } from "@medusajs/icons";
 
