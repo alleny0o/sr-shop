@@ -1,6 +1,6 @@
 // Purpose: Define middlewares for the API routes.
 import { defineMiddlewares } from "@medusajs/medusa";
-import { validateAndTransformBody, validateAndTransformQuery } from "@medusajs/framework/http";
+import { MedusaNextFunction, MedusaRequest, MedusaResponse, validateAndTransformBody, validateAndTransformQuery } from "@medusajs/framework/http";
 import { createFindParams } from "@medusajs/medusa/api/utils/validators";
 
 // schemas
@@ -17,7 +17,7 @@ export default defineMiddlewares({
     {
       matcher: "/admin/file-manager",
       method: "POST",
-      middlewares: [upload.array("files")],
+      middlewares: [upload.array("files") as unknown as (req: MedusaRequest, res: MedusaResponse, next: MedusaNextFunction) => any],
     },
     {
         matcher: "/admin/file-manager",
