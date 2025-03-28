@@ -5,7 +5,7 @@ loadEnv(process.env.NODE_ENV || "development", process.cwd());
 
 // Variables
 const PRODUCTION = process.env.NODE_ENV === "production";
-const BACKEND_URL = process.env.MEDUSA_BACKEND_URL || "http://localhost:9000";
+const BACKEND_URL = process.env.VITE_BACKEND_URL || "http://localhost:9000";
 
 // Export Config
 module.exports = defineConfig({
