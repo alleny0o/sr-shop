@@ -10,7 +10,7 @@ export const uploadMediaFiles = async (files: File[], variant_id: string, produc
     const formData = new FormData();
     files.forEach((file) => formData.append("files", file));
 
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/file-manager`, {
+    const response = await fetch(`/admin/file-manager`, {
         method: 'POST',
         credentials: 'include',
         body: formData,
@@ -40,7 +40,7 @@ export const uploadMediaFiles = async (files: File[], variant_id: string, produc
 
 // Delete Media Files From Server
 export const deleteMediaFiles = async (file_ids: string[]): Promise<void> => {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/file-manager`, {
+    const response = await fetch(`/admin/file-manager`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ file_ids: file_ids }),
@@ -54,7 +54,7 @@ export const deleteMediaFiles = async (file_ids: string[]): Promise<void> => {
 // Update Variant Medias On Server
 export const updateVariantMedias = async (variant_medias: Media[], variant_id: string): Promise<void> => {
     // Remove Existing Medias From Variant
-    const delete_response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/product-variant_medias/variant/${variant_id}`, {
+    const delete_response = await fetch(`/admin/product-variant_medias/variant/${variant_id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
