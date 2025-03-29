@@ -4,6 +4,7 @@ import { defineRouteConfig } from "@medusajs/admin-sdk";
 // UI Components
 import {
   createDataTableColumnHelper,
+  createDataTableCommandHelper,
   Container,
   DataTable,
   useDataTable,
@@ -11,6 +12,8 @@ import {
   StatusBadge,
   Toaster,
   DataTablePaginationState,
+  DataTableRowSelectionState,
+  toast,
 } from "@medusajs/ui";
 import { ChatBubbleLeftRight } from "@medusajs/icons";
 
@@ -30,6 +33,7 @@ import { Link } from "react-router-dom";
 const columnHelper = createDataTableColumnHelper<Review>();
 
 const columns = [
+  columnHelper.select(),
   columnHelper.accessor("id", {
     header: "ID",
   }),
@@ -59,33 +63,91 @@ const columns = [
   }),
 ];
 
-const limit = 15
+const commandHelper = createDataTableCommandHelper();
+
+const useCommands = (refetch: () => void) => {
+  return [
+    commandHelper.command({
+      label: "Approve",
+      shortcut: "A",
+      action: async (selection) => {
+        const reviewsToApproveIds = Object.keys(selection);
+
+        sdk.client
+          .fetch("/admin/reviews/status", {
+            method: "POST",
+            body: {
+              ids: reviewsToApproveIds,
+              status: "approved",
+            },
+          })
+          .then(() => {
+            toast.success("Reviews approved");
+            refetch();
+          })
+          .catch(() => {
+            toast.error("Failed to approve reviews");
+          });
+      },
+    }),
+    commandHelper.command({
+      label: "Reject",
+      shortcut: "R",
+      action: async (selection) => {
+        const reviewsToRejectIds = Object.keys(selection);
+
+        sdk.client
+          .fetch("/admin/reviews/status", {
+            method: "POST",
+            body: {
+              ids: reviewsToRejectIds,
+              status: "rejected",
+            },
+          })
+          .then(() => {
+            toast.success("Reviews rejected");
+            refetch();
+          })
+          .catch(() => {
+            toast.error("Failed to reject reviews");
+          });
+      },
+    }),
+  ];
+};
+
+const limit = 15;
 
 const ProductReviewsPage = () => {
   const [pagination, setPagination] = useState<DataTablePaginationState>({
     pageSize: limit,
     pageIndex: 0,
-  })
+  });
+
+  const [rowSelection, setRowSelection] = useState<DataTableRowSelectionState>({});
 
   const offset = useMemo(() => {
-    return pagination.pageIndex * limit
-  }, [pagination])
+    return pagination.pageIndex * limit;
+  }, [pagination]);
 
   const { data, isLoading, refetch } = useQuery<{
-    reviews: Review[]
-    count: number
-    limit: number
-    offset: number
+    reviews: Review[];
+    count: number;
+    limit: number;
+    offset: number;
   }>({
     queryKey: ["reviews", offset, limit],
-    queryFn: () => sdk.client.fetch("/admin/product-review", {
-      query: {
-        offset: pagination.pageIndex * pagination.pageSize,
-        limit: pagination.pageSize,
-        order: "-created_at",
-      },
-    }),
-  })
+    queryFn: () =>
+      sdk.client.fetch("/admin/product-review", {
+        query: {
+          offset: pagination.pageIndex * pagination.pageSize,
+          limit: pagination.pageSize,
+          order: "-created_at",
+        },
+      }),
+  });
+
+  const commands = useCommands(refetch);
 
   const table = useDataTable({
     columns,
@@ -97,27 +159,31 @@ const ProductReviewsPage = () => {
       onPaginationChange: setPagination,
     },
     getRowId: (row) => row.id,
-  })
+    commands,
+    rowSelection: {
+      state: rowSelection,
+      onRowSelectionChange: setRowSelection,
+    },
+  });
 
   return (
     <Container className="p-0">
       <DataTable instance={table}>
         <DataTable.Toolbar className="flex flex-col items-start justify-between gap-2 md:flex-row md:items-center">
-          <Heading>
-            Reviews
-          </Heading>
+          <Heading>Reviews</Heading>
         </DataTable.Toolbar>
         <DataTable.Table />
         <DataTable.Pagination />
+        <DataTable.CommandBar selectedLabel={(count) => `${count} selected`} />
       </DataTable>
       <Toaster />
     </Container>
-  )
-}
+  );
+};
 
 export const config = defineRouteConfig({
   label: "Reviews",
   icon: ChatBubbleLeftRight,
-})
+});
 
 export default ProductReviewsPage;
