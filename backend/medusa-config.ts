@@ -98,5 +98,9 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/product-review",
     },
+    // product-form
+    {
+      resolve: "./src/modules/product-form",
+    },
   ],
 });

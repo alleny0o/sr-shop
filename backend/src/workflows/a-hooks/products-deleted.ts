@@ -4,10 +4,12 @@ import { deleteProductsWorkflow, deleteFilesWorkflow } from "@medusajs/medusa/co
 // Services
 import VariantMediaModuleService from "../../modules/variant-media/service";
 import ProductReviewModuleService from "../../modules/product-review/service";
+import ProductFormModuleService from "../../modules/product-form/service";
 
 // Module Definitions
 import { VARIANT_MEDIA_MODULE } from "../../modules/variant-media";
 import { PRODUCT_REVIEW_MODULE } from "../../modules/product-review";
+import { PRODUCT_FORM_MODULE } from "../../modules/product-form";
 
 // Workflows
 import deleteVariantMediasWorkflow from "../variant-media/delete-variant-medias";
@@ -94,4 +96,38 @@ deleteProductsWorkflow.hooks.productsDeleted(async ({ ids }, { container }) => {
     await deleteProductReviewsWorkflow(container).run({ input: { ids: review_ids } });
   }
   /* ----- END PRODUCT REVIEW ----- */
+
+  /* ----- START PRODUCT FORM ----- */
+  // This part deletes product forms associated with the deleted products.
+  const productFormModuleService: ProductFormModuleService = container.resolve(PRODUCT_FORM_MODULE);
+
+  const product_forms = await productFormModuleService.listProductForms(
+    { product_id: ids },
+    { relations: ["fields", "fields.image"] }
+  );
+
+  const product_form_file_ids: string[] = [];
+  const product_form_ids: string[] = [];
+  for (const product_form of product_forms) {
+    if (!product_form) continue;
+
+    product_form_ids.push(product_form.id);
+
+    for (const product_form_field of product_form.fields) {
+      if (product_form_field.image && "file_id" in product_form_field.image) {
+        product_form_file_ids.push(product_form_field.image.file_id);
+      }
+    }
+  }
+
+  await productFormModuleService.deleteProductForms(product_form_ids);
+
+  if (product_form_ids.length > 0) {
+    await deleteFilesWorkflow(container).run({
+      input: {
+        ids: product_form_file_ids,
+      },
+    });
+  }
+  /* ----- END PRODUCT FORM ----- */
 });
