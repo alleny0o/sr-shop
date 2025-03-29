@@ -17,6 +17,7 @@ export type ProductFormField = {
 };
 
 export type FieldImage = {
+    id?: string;
     file_id: string;
     name: string;
     size: number;

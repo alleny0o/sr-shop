@@ -1,15 +1,15 @@
 import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-sdk";
-import updateProductFormFieldsStep, { UpdateProductFormFieldsStepInput } from "../update-product-form-fields/steps/update-product-form-fields";
+import updateProductFormStep, { UpdateProductFormStepInput} from "./steps/update-product-form";
 
-type UpdateProductFormFieldsWorkflowInput = UpdateProductFormFieldsStepInput;
+type UpdateProductFormWorkflowInput = UpdateProductFormStepInput;
 
-const updateProductFormFieldsWorkflow = createWorkflow(
-    'update-product-form-fields-workflow',
-    (input: UpdateProductFormFieldsWorkflowInput) => {
-        const result = updateProductFormFieldsStep(input);
+const updateProductFormWorkflow = createWorkflow(
+    'update-product-form-workflow',
+    (input: UpdateProductFormStepInput) => {
+        const result = updateProductFormStep(input);
 
         return new WorkflowResponse(result);
     },
 );
 
-export default updateProductFormFieldsWorkflow;
+export default updateProductFormWorkflow;

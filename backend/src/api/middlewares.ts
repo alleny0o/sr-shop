@@ -10,7 +10,16 @@ import {
 } from "@medusajs/framework/http";
 
 // schemas
-import { createReviewSchema, createVariantMediasSchema, deleteFilesSchema, updateReviewsStatusSchema } from "./validation-schemas";
+import {
+  createProductFormFieldsSchema,
+  createReviewSchema,
+  createVariantMediasSchema,
+  deleteFilesSchema,
+  deleteProductFormFieldsSchema,
+  updateProductFormFieldsSchema,
+  updateProductFormSchema,
+  updateReviewsStatusSchema,
+} from "./validation-schemas";
 
 import { createFindParams } from "@medusajs/medusa/api/utils/validators";
 const GetAdminReviewsSchema = createFindParams();
@@ -47,23 +56,46 @@ export default defineMiddlewares({
     {
       matcher: "/admin/product-review",
       method: "GET",
-      middlewares: [validateAndTransformQuery(GetAdminReviewsSchema, {
-        isList: true,
-        defaults: [
-          "id",
-          "title",
-          "content",
-          "rating",
-          "product_id",
-          "customer_id",
-          "status",
-          "first_name",
-          "last_name",
-          "created_at",
-          "updated_at",
-          "product.*",
-        ],
-      })],
+      middlewares: [
+        validateAndTransformQuery(GetAdminReviewsSchema, {
+          isList: true,
+          defaults: [
+            "id",
+            "title",
+            "content",
+            "rating",
+            "product_id",
+            "customer_id",
+            "status",
+            "first_name",
+            "last_name",
+            "created_at",
+            "updated_at",
+            "product.*",
+          ],
+        }),
+      ],
+    },
+    // ----- /admin/product-product_form -----
+    {
+      matcher: "/admin/product-product_form/form",
+      method: "PUT",
+      middlewares: [validateAndTransformBody(updateProductFormSchema)],
+    },
+    {
+      matcher: "/admin/product-product_form/fields",
+      method: "POST",
+      middlewares: [validateAndTransformBody(createProductFormFieldsSchema)],
+    },
+    {
+      matcher: "/admin/product-product_form/fields",
+      method: "DELETE",
+      middlewares: [validateAndTransformBody(deleteProductFormFieldsSchema)],
+    },
+    {
+      matcher: "/admin/product-product_form/fields",
+      method: "PUT",
+      middlewares: [validateAndTransformBody(updateProductFormFieldsSchema)],
     },
 
     /* STORE MIDDLEWARES */
