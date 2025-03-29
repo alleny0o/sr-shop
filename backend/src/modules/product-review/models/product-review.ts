@@ -7,6 +7,7 @@ const ProductReview = model
     title: model.text().nullable(),
     content: model.text(),
     rating: model.float(),
+    recommend: model.boolean(),
     first_name: model.text(),
     last_name: model.text(),
     status: model.enum(["pending", "approved", "rejected"]).default("pending"),
