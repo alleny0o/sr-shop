@@ -49,3 +49,9 @@ export const createReviewSchema = z.object({
     )
     .optional(),
 });
+
+// ----- /store/product-review/status POST -----
+export const updateReviewsStatusSchema = z.object({
+  ids: z.array(z.string()),
+  status: z.enum(["pending", "approved", "rejected"]),
+});

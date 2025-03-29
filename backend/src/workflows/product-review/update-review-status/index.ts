@@ -11,3 +11,5 @@ const updateReviewsStatusWorkflow = createWorkflow("update-reviews-status-workfl
 
     return new WorkflowResponse(reviews);
 });
+
+export default updateReviewsStatusWorkflow;

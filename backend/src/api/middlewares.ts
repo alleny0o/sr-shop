@@ -10,7 +10,7 @@ import {
 } from "@medusajs/framework/http";
 
 // schemas
-import { createReviewSchema, createVariantMediasSchema, deleteFilesSchema } from "./validation-schemas";
+import { createReviewSchema, createVariantMediasSchema, deleteFilesSchema, updateReviewsStatusSchema } from "./validation-schemas";
 
 import { createFindParams } from "@medusajs/medusa/api/utils/validators";
 const GetAdminReviewsSchema = createFindParams();
@@ -72,6 +72,12 @@ export default defineMiddlewares({
       matcher: "/store/product-review",
       method: ["POST"],
       middlewares: [authenticate("customer", ["session", "bearer"]), validateAndTransformBody(createReviewSchema)],
+    },
+    // ----- /store/product-review/status -----
+    {
+      matcher: "/store/product-review/status",
+      method: ["POST"],
+      middlewares: [validateAndTransformBody(updateReviewsStatusSchema)],
     },
   ],
 });
