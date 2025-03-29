@@ -6,7 +6,7 @@ type CreateReviewInput = {
   product_review: CreateReviewStepInput;
 };
 
-export const createReviewWorkflow = createWorkflow("create-review-workflow", (input: CreateReviewInput) => {
+const createReviewWorkflow = createWorkflow("create-review-workflow", (input: CreateReviewInput) => {
   // check product exists
   // @ts-ignore
   useQueryGraphStep({
@@ -25,3 +25,5 @@ export const createReviewWorkflow = createWorkflow("create-review-workflow", (in
   // @ts-ignore
   return new WorkflowResponse(review);
 });
+
+export default createReviewWorkflow;
