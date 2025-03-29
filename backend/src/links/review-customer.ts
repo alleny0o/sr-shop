@@ -1,14 +1,14 @@
 import { defineLink } from "@medusajs/framework/utils";
 import ProductReviewModule from "../modules/product-review";
-import ProductModule from "@medusajs/medusa/product";
+import CustomerModule from "@medusajs/medusa/customer";
 
 export default defineLink(
   {
     linkable: ProductReviewModule.linkable.productReview,
-    field: "product_id",
+    field: "customer_id",
     isList: false,
   },
-  ProductModule.linkable.product,
+  CustomerModule.linkable.customer,
   {
     readOnly: true,
   }

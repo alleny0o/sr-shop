@@ -17,22 +17,22 @@ import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils";
 
 // Registering hook for when product variants are deleted
 deleteProductVariantsWorkflow.hooks.productVariantsDeleted(async ({ ids }, { container }) => {
-  // Resolve services and utilities
-  const variantMediaModuleService: VariantMediaModuleService = container.resolve(VARIANT_MEDIA_MODULE);
   const link = container.resolve(ContainerRegistrationKeys.LINK);
 
   /* ----- VARIANT MEDIA ----- */
+  const variantMediaModuleService: VariantMediaModuleService = container.resolve(VARIANT_MEDIA_MODULE);
+
   // Fetch variant media associated with the deleted variants
   const variant_medias = await variantMediaModuleService.listVariantMedias({ variant_id: ids });
 
   // Prepare IDs and link definitions for cleanup
   const file_ids: string[] = [];
   const variant_media_ids: string[] = [];
-  const links: LinkDefinition[] = [];
+  const variant_media_links: LinkDefinition[] = [];
   for (const vm of variant_medias) {
     file_ids.push(vm.file_id);
     variant_media_ids.push(vm.id);
-    links.push({
+    variant_media_links.push({
       [Modules.PRODUCT]: {
         product_variant_id: vm.variant_id,
       },
@@ -61,7 +61,7 @@ deleteProductVariantsWorkflow.hooks.productVariantsDeleted(async ({ ids }, { con
   }
 
   // cleanup links
-  if (links.length > 0) {
-    await link.dismiss(links);
+  if (variant_media_links.length > 0) {
+    await link.dismiss(variant_media_links);
   }
 });
