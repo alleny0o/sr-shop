@@ -17,21 +17,6 @@ const deleteProductReviewsStep = createStep(
     // Delete the product reviews by their IDs
     await reviewModuleService.deleteProductReviews(input.ids);
 
-    // Collect all image IDs associated with the reviews
-    const allImages = productReviews?.map((review) => review.images || []) || [];
-    const allImageIds: string[] = [];
-
-    for (const imageGroup of allImages) {
-      for (const image of imageGroup) {
-        allImageIds.push(image.id);
-      }
-    }
-
-    // Delete the associated images if any exist
-    if (allImageIds.length > 0) {
-      await reviewModuleService.deleteProductReviewImages(allImageIds);
-    }
-
     return new StepResponse(productReviews, productReviews);
   },
   async (productReviews, { container }) => {
