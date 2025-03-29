@@ -94,5 +94,9 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/variant-media",
     },
+    // product-review
+    {
+      resolve: "./src/modules/product-review",
+    },
   ],
 });
