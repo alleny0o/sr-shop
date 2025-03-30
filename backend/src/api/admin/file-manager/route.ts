@@ -24,7 +24,7 @@ export const POST = async (
         },
       });
 
-    res.status(200).send({ files: result });
+    res.status(200).json({ files: result });
 };
 
 // DELETE ROUTE

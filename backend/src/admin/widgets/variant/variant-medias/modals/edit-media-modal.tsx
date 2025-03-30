@@ -25,7 +25,7 @@ type EditMediaModalProps = {
   setVariantMedias: (variantMedias: Media[]) => void;
 };
 
-const EditMediaModal = ({ variantMedias, setVariantMedias }: EditMediaModalProps) => {
+export const EditMediaModal = ({ variantMedias, setVariantMedias }: EditMediaModalProps) => {
   const variant = useVariantContext();
   const variant_id = variant.variant_id;
   const product_id = variant.product_id;
@@ -178,5 +178,3 @@ const EditMediaModal = ({ variantMedias, setVariantMedias }: EditMediaModalProps
     </>
   );
 };
-
-export default EditMediaModal;

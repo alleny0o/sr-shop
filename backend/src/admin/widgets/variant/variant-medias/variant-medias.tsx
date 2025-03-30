@@ -18,7 +18,7 @@ import { VariantContext } from "./context/variant-context";
 import { Media } from "./types";
 
 // Custom Components
-import EditMediaModal from "./modals/edit-media-modal";
+import { EditMediaModal } from "./modals/edit-media-modal";
 import { SectionWrapper } from "../../../components/section-wrapper";
 import { SectionLoader } from "../../../components/section-loader";
 import { SectionText } from "../../../components/section-text";

@@ -2,7 +2,6 @@ import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk";
 import ProductFormModuleService from "../../../../modules/product-form/service";
 import { PRODUCT_FORM_MODULE } from "../../../../modules/product-form";
 import { ProductFormField } from "../../types";
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils";
 
 export type CreateProductFormFieldsStepInput = {
   fields: ProductFormField[];
@@ -13,17 +12,12 @@ const createProductFormFieldsStep = createStep(
   "create-product-form-fields-step",
   async (input: CreateProductFormFieldsStepInput, { container }) => {
     const productFormModuleService: ProductFormModuleService = container.resolve(PRODUCT_FORM_MODULE);
-    const query = container.resolve(ContainerRegistrationKeys.QUERY);
 
-    const { data: products } = await query.graph({
-      entity: "product",
-      fields: ["product_form.*"],
-      filters: {
-        id: input.product_id,
-      },
+    const productForms = await productFormModuleService.listProductForms({
+      product_id: input.product_id,
     });
 
-    const productFormId = products[0].product_form?.id;
+    const productFormId = productForms[0].id;
 
     const createdFieldsId: string[] = [];
     for (const field of input.fields) {
