@@ -29,7 +29,7 @@ const createProductFormWorkflow = createWorkflow("create-product-form-workflow",
         product_id: input.product_id,
       },
       [PRODUCT_FORM_MODULE]: {
-        customization_form_id: result.id,
+        product_form_id: result.id,
       },
     },
   ]);
