@@ -108,10 +108,20 @@ deleteProductsWorkflow.hooks.productsDeleted(async ({ ids }, { container }) => {
 
   const product_form_file_ids: string[] = [];
   const product_form_ids: string[] = [];
+  const product_form_links: LinkDefinition[] = [];
   for (const product_form of product_forms) {
     if (!product_form) continue;
 
     product_form_ids.push(product_form.id);
+
+    product_form_links.push({
+      [Modules.PRODUCT]: {
+        product_id: product_form.product_id,
+      },
+      [PRODUCT_FORM_MODULE]: {
+        product_form_id: product_form.id,
+      },
+    });
 
     for (const product_form_field of product_form.fields) {
       if (product_form_field.image && "file_id" in product_form_field.image) {
@@ -128,6 +138,10 @@ deleteProductsWorkflow.hooks.productsDeleted(async ({ ids }, { container }) => {
         ids: product_form_file_ids,
       },
     });
+  }
+
+  if (product_form_links.length > 0) {
+    await link.dismiss(product_form_links);
   }
   /* ----- END PRODUCT FORM ----- */
 });

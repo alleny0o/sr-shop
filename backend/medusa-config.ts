@@ -102,5 +102,9 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/product-form",
     },
+    // option-ui
+    {
+      resolve: "./src/modules/option-ui",
+    },
   ],
 });
