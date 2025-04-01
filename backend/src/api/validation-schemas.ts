@@ -71,6 +71,32 @@ export const updateProductFormFieldsSchema = z.object({
 });
 /* END PRODUCT FORM SCHEMAS */
 
+/* START OPTION CONFIG SCHEMAS */
+export const updateOptionConfigSchema = z.object({
+  id: z.string(),
+  option_title: z.string().optional(),
+  display_type: z.any().optional(),
+  is_selected: z.boolean().optional(),
+});
+
+export const updateOptionValueSchema = z.object({
+  id: z.string(),
+  option_value_id: z.string().optional(),
+  color: z.string().optional(),
+  image: z.object({
+    file_id: z.string(),
+    name: z.string(),
+    size: z.number(),
+    mime_type: z.string(),
+    url: z.string(),
+  }).optional(),
+});
+
+export const deleteOptionValueSchema = z.object({
+  id: z.string(),
+});
+/* END OPTION CONFIG SCHEMAS */
+
 /* STORE SCHEMAS */
 /* START PRODUCT REVIEW SCHEMAS  */
 export const createReviewSchema = z.object({

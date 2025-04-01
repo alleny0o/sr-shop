@@ -98,7 +98,7 @@ const ProductFormWidget = ({ data }: DetailWidgetProps<AdminProduct>) => {
       {form ? (
         <SectionWrapper
           heading="Product Form"
-          modal={<ProductFormModal productForm={form} product_id={data.id} focusModal={modalOpen} setFocusModal={setModalOpen} />}
+          component={<ProductFormModal productForm={form} product_id={data.id} focusModal={modalOpen} setFocusModal={setModalOpen} />}
         >
           {form && <ProductFormTable form={form} setModalOpen={setModalOpen} />}
         </SectionWrapper>

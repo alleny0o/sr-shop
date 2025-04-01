@@ -71,7 +71,7 @@ const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) =
 
   return (
     <VariantContext.Provider value={{ variant_id: data.id, product_id: data.product_id }}>
-      <SectionWrapper heading="Media" modal={<EditMediaModal variantMedias={variantMedias} setVariantMedias={setVariantMedias} />}>
+      <SectionWrapper heading="Media" component={<EditMediaModal variantMedias={variantMedias} setVariantMedias={setVariantMedias} />}>
         {variantMedias.length > 0 ? (
           <div>
             <div className="grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-4 px-6 py-4">

@@ -5,11 +5,13 @@ import { deleteProductsWorkflow, deleteFilesWorkflow } from "@medusajs/medusa/co
 import VariantMediaModuleService from "../../modules/variant-media/service";
 import ProductReviewModuleService from "../../modules/product-review/service";
 import ProductFormModuleService from "../../modules/product-form/service";
+import OptionConfigModuleService from "../../modules/option-config/service";
 
 // Module Definitions
 import { VARIANT_MEDIA_MODULE } from "../../modules/variant-media";
 import { PRODUCT_REVIEW_MODULE } from "../../modules/product-review";
 import { PRODUCT_FORM_MODULE } from "../../modules/product-form";
+import { OPTION_CONFIG_MODULE } from "../../modules/option-config";
 
 // Workflows
 import deleteVariantMediasWorkflow from "../variant-media/delete-variant-medias";
@@ -144,4 +146,46 @@ deleteProductsWorkflow.hooks.productsDeleted(async ({ ids }, { container }) => {
     await link.dismiss(product_form_links);
   }
   /* ----- END PRODUCT FORM ----- */
+
+  /* ----- START OPTION CONFIG ----- */
+  const optionConfigModuleService: OptionConfigModuleService = container.resolve(OPTION_CONFIG_MODULE);
+  const optionConfigs = await optionConfigModuleService.listOptionConfigs(
+    { product_id: ids },
+    { relations: ["option_values", "option_values.image"] }
+  );
+
+  const option_config_file_ids: string[] = [];
+  const option_config_ids: string[] = [];
+  const option_config_links: LinkDefinition[] = [];
+  for (const optionConfig of optionConfigs) {
+    for (const optionValue of optionConfig.option_values) {
+      if (optionValue.image && "file_id" in optionValue.image) {
+        option_config_file_ids.push(optionValue.image.file_id);
+      }
+    }
+
+    option_config_ids.push(optionConfig.id);
+
+    option_config_links.push({
+      [Modules.PRODUCT]: {
+        product_option_id: optionConfig.product_id,
+      },
+      [OPTION_CONFIG_MODULE]: {
+        option_config_id: optionConfig.id,
+      },
+    });
+  }
+
+  if (option_config_file_ids.length > 0) {
+    await deleteFilesWorkflow(container).run({
+      input: {
+        ids: option_config_file_ids,
+      },
+    });
+  }
+
+  await optionConfigModuleService.deleteOptionConfigs(option_config_ids);
+
+  await link.dismiss(option_config_links);
+  /* ----- END OPTION CONFIG ----- */
 });

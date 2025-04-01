@@ -1,12 +1,12 @@
 import { MedusaService } from "@medusajs/framework/utils";
-import OptionUI from "./models/option-ui";
+import OptionConfig from "./models/option-config";
 import OptionValue from "./models/option-value";
 import OptionImage from "./models/option-image";
 
-class OptionUIModuleService extends MedusaService({
-    OptionUI,
+class OptionConfigModuleService extends MedusaService({
+    OptionConfig,
     OptionValue,
     OptionImage,
 }) {};
 
-export default OptionUIModuleService;
+export default OptionConfigModuleService;

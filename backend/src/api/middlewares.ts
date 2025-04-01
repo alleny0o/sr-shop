@@ -1,4 +1,3 @@
-// Purpose: Define middlewares for the API routes.
 import { defineMiddlewares } from "@medusajs/medusa";
 import {
   authenticate,
@@ -15,7 +14,10 @@ import {
   createReviewSchema,
   createVariantMediasSchema,
   deleteFilesSchema,
+  deleteOptionValueSchema,
   deleteProductFormFieldsSchema,
+  updateOptionConfigSchema,
+  updateOptionValueSchema,
   updateProductFormFieldsSchema,
   updateProductFormSchema,
   updateReviewsStatusSchema,
@@ -96,6 +98,22 @@ export default defineMiddlewares({
       matcher: "/admin/product-product_form/fields",
       method: "PUT",
       middlewares: [validateAndTransformBody(updateProductFormFieldsSchema)],
+    },
+    // ----- /admin/product-option_config -----
+    {
+      matcher: "/admin/product-option_config/option-config",
+      method: "PUT",
+      middlewares: [validateAndTransformBody(updateOptionConfigSchema)],
+    },
+    {
+      matcher: "/admin/product-option_config/option-values",
+      method: "PUT",
+      middlewares: [validateAndTransformBody(updateOptionValueSchema)],
+    },
+    {
+      matcher: "/admin/product-option_config/option-values",
+      method: "DELETE",
+      middlewares: [validateAndTransformBody(deleteOptionValueSchema)],
     },
 
     /* STORE MIDDLEWARES */

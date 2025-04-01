@@ -5,12 +5,12 @@ import { InformationCircle } from "@medusajs/icons";
 type SectionWrapperProps = {
   heading: string;
   children: React.ReactNode;
-  modal?: React.ReactNode;
+  component?: React.ReactNode;
   tooltip?: string;
 };
 
 export const SectionWrapper = (input: SectionWrapperProps) => {
-  const { heading, children, modal, tooltip } = input;
+  const { heading, children, component, tooltip } = input;
 
   return (
     <>
@@ -22,7 +22,7 @@ export const SectionWrapper = (input: SectionWrapperProps) => {
               <InformationCircle />
             </Tooltip>
           ) : (
-            <>{modal}</>
+            <>{component}</>
           )}
         </div>
         {children}
