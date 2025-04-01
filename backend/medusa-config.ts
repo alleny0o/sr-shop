@@ -106,5 +106,9 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/option-config",
     },
+    // media-tag
+    {
+      resolve: "./src/modules/media-tag",
+    },
   ],
 });
