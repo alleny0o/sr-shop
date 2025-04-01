@@ -68,6 +68,18 @@ export const OptionConfigDrawer = ({ optionConfig, open, setOpen }: OptionConfig
     searchParams.append("ids[]", value.option_value_id);
   }
 
+  if (searchParams.size === 0) {
+    return (
+      <DrawerWrapper open={open} openChange={() => setOpen(false)} heading={`Edit Option - ${updatedOptionConfig.option_title}`}>
+        <div className="size-full flex justify-center items-center">
+          <Text size="base" className="text-gray-500">
+            No option values to load. Add at least one option value to edit!
+          </Text>
+        </div>
+      </DrawerWrapper>
+    );
+  };
+
   const {
     data: optionValues,
     isLoading,
@@ -83,7 +95,7 @@ export const OptionConfigDrawer = ({ optionConfig, open, setOpen }: OptionConfig
 
   if (isLoading) {
     return (
-      <DrawerWrapper open={open} openChange={(open) => setOpen(!open)} heading="Edit Option - []">
+      <DrawerWrapper open={open} openChange={(open) => setOpen(!open)} heading={`Edit Option - ${updatedOptionConfig.option_title}`}>
         <div className="size-full flex justify-center items-center">
           <div className="loader border-t-2 rounded-full border-gray-500 bg-gray-300 animate-spin aspect-square w-10 flex justify-center items-center text-yellow-700"></div>
         </div>
@@ -93,7 +105,7 @@ export const OptionConfigDrawer = ({ optionConfig, open, setOpen }: OptionConfig
 
   if (error) {
     return (
-      <DrawerWrapper open={open} openChange={(open) => setOpen(!open)} heading="Edit Option - []">
+      <DrawerWrapper open={open} openChange={(open) => setOpen(!open)} heading={`Edit Option - ${updatedOptionConfig.option_title}`}>
         <div className="size-full flex justify-center items-center">
           <Badge color="red" size="base">
             ERROR: Couldn't load option values. Please reload the page.
@@ -114,7 +126,7 @@ export const OptionConfigDrawer = ({ optionConfig, open, setOpen }: OptionConfig
             setOpen(false);
           }
         }}
-        heading={`Edit Option – ${updatedOptionConfig.option_title || "Unnamed"}`}
+        heading={`Edit Option - ${updatedOptionConfig.option_title}`}
         footer={
           <>
             <Button size="small" variant="secondary" onClick={handleDrawerClose}>
@@ -180,7 +192,7 @@ export const OptionConfigDrawer = ({ optionConfig, open, setOpen }: OptionConfig
         <div className="flex flex-col space-y-2">
           <div className="flex justify-between items-center">
             <Label weight="plus" size="small">
-              {updatedOptionConfig.option_values.length >= 1 ? "Edit Variations" : "No Variations to Edit"}
+              {updatedOptionConfig.option_values.length >= 1 ? "Edit option values:" : "No option values to edit"}
             </Label>
             <Tooltip content="When updating option values for an option, first remove all existing option values before re-adding them. This ensures predictable ordering and accurate display on the storefront.">
               <InformationCircle />
@@ -195,7 +207,7 @@ export const OptionConfigDrawer = ({ optionConfig, open, setOpen }: OptionConfig
                   return (
                     <Container key={value.id} className="items-start flex flex-col space-y-2 px-3 py-2">
                       <div className="inline-flex gap-x-1 items-center">
-                        <Label size="xsmall">Variation value:</Label>
+                        <Label size="xsmall">Option value:</Label>
                         <Badge size="2xsmall" color="grey" className="inline-flex">
                           {valueName}
                         </Badge>

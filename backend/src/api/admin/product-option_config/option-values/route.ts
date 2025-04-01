@@ -6,10 +6,6 @@ import { z } from "zod";
 export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) => {
   const ids = req.query.ids as string[];
 
-  if (!ids || ids.length === 0) {
-    throw new MedusaError(MedusaError.Types.INVALID_DATA, "No ids provided");
-  }
-
   const query = req.scope.resolve(ContainerRegistrationKeys.QUERY);
   const { data: linkResults } = await query.graph({
     entity: "product_option_value",
@@ -18,6 +14,7 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
       id: ids,
     },
   });
+
 
   const resultMap = new Map(linkResults.map((result) => [result.id, result]));
 
