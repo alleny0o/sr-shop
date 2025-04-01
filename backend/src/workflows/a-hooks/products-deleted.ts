@@ -6,16 +6,19 @@ import VariantMediaModuleService from "../../modules/variant-media/service";
 import ProductReviewModuleService from "../../modules/product-review/service";
 import ProductFormModuleService from "../../modules/product-form/service";
 import OptionConfigModuleService from "../../modules/option-config/service";
+import MediaTagModuleService from "../../modules/media-tag/service";
 
 // Module Definitions
 import { VARIANT_MEDIA_MODULE } from "../../modules/variant-media";
 import { PRODUCT_REVIEW_MODULE } from "../../modules/product-review";
 import { PRODUCT_FORM_MODULE } from "../../modules/product-form";
 import { OPTION_CONFIG_MODULE } from "../../modules/option-config";
+import { MEDIA_TAG_MODULE } from "../../modules/media-tag";
 
 // Workflows
 import deleteVariantMediasWorkflow from "../variant-media/delete-variant-medias";
 import deleteProductReviewsWorkflow from "../product-review/delete-reviews";
+import deleteMediaTagWorkflow from "../media-tag/delete-media-tag";
 
 // Framework Utils
 import { LinkDefinition } from "@medusajs/framework/types";
@@ -188,4 +191,36 @@ deleteProductsWorkflow.hooks.productsDeleted(async ({ ids }, { container }) => {
 
   await link.dismiss(option_config_links);
   /* ----- END OPTION CONFIG ----- */
+
+  /* ----- START MEDIA TAG ----- */
+  const mediaTagModuleService: MediaTagModuleService = container.resolve(MEDIA_TAG_MODULE);
+
+  const media_tags = await mediaTagModuleService.listMediaTags({ product_id: ids });
+  const media_tag_ids: string[] = [];
+  const media_tag_links: LinkDefinition[] = [];
+
+  for (const mt of media_tags) {
+    media_tag_ids.push(mt.id);
+    media_tag_links.push({
+      [Modules.PRODUCT]: {
+        product_variant_id: mt.variant_id,
+      },
+      [MEDIA_TAG_MODULE]: {
+        media_tag_id: mt.id,
+      },
+    });
+  }
+
+  if (media_tag_ids.length > 0) {
+    await deleteMediaTagWorkflow(container).run({
+      input: {
+        ids: media_tag_ids,
+      },
+    });
+  }
+
+  if (media_tag_links.length > 0) {
+    await link.dismiss(media_tag_links);
+  }
+  /* ----- END MEDIA TAG ----- */
 });

@@ -4,13 +4,14 @@ import { MEDIA_TAG_MODULE } from "../../../../modules/media-tag";
 import { MedusaError } from "@medusajs/framework/utils";
 
 export type CreateMediaTagStepInput = {
+  product_id: string;
   variant_id: string;
   value?: number;
 };
 
 const createMediaTagStep = createStep(
   "create-media-tag-step",
-  async ({ variant_id, value }: CreateMediaTagStepInput, { container }) => {
+  async ({ product_id, variant_id, value }: CreateMediaTagStepInput, { container }) => {
     if (value !== undefined && (!Number.isInteger(value) || value < 1)) {
       throw new MedusaError(MedusaError.Types.INVALID_DATA, "`value` must be a natural number (integer ≥ 1) if provided.");
     }
@@ -18,6 +19,7 @@ const createMediaTagStep = createStep(
     const mediaTagModuleService: MediaTagModuleService = container.resolve(MEDIA_TAG_MODULE);
 
     const mediaTag = await mediaTagModuleService.createMediaTags({
+      product_id,
       variant_id,
       value: value ?? null,
     });

@@ -1,6 +1,6 @@
 import { createWorkflow, WorkflowResponse } from "@medusajs/framework/workflows-sdk";
 import createMediaTagStep, { CreateMediaTagStepInput } from "./steps/create-media-tag";
-import { createRemoteLinkStep } from "@medusajs/medusa/core-flows";
+import { createRemoteLinkStep, useQueryGraphStep } from "@medusajs/medusa/core-flows";
 import { Modules } from "@medusajs/framework/utils";
 import { MEDIA_TAG_MODULE } from "../../../modules/media-tag";
 
@@ -33,6 +33,7 @@ const createMediaTagWorkflow = createWorkflow("create-media-tag-workflow", (inpu
     },
   ]);
 
+  // @ts-ignore
   return new WorkflowResponse(result);
 });
 

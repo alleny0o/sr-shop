@@ -4,6 +4,7 @@ import { createProductsWorkflow } from "@medusajs/medusa/core-flows";
 // Workflows
 import createProductFormWorkflow from "../product-form/create-product-form";
 import createOptionConfigWorkflow from "../option-config/create-option-config";
+import createMediaTagWorkflow from "../media-tag/create-media-tag";
 
 createProductsWorkflow.hooks.productsCreated(async ({ products }, { container }) => {
   /* ----- START PRODUCT FORM ----- */
