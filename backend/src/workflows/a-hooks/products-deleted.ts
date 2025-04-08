@@ -42,7 +42,7 @@ deleteProductsWorkflow.hooks.productsDeleted(async ({ ids }, { container }) => {
     variant_media_ids.push(vm.id);
     variant_media_links.push({
       [Modules.PRODUCT]: {
-        product_id: vm.product_id,
+        product_variant_id: vm.product_id,
       },
       [VARIANT_MEDIA_MODULE]: {
         variant_media_id: vm.id,

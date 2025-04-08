@@ -12,7 +12,7 @@ createProductVariantsWorkflow.hooks.productVariantsCreated(async ({ product_vari
         input: {
           product_id: variant.product_id,
           variant_id: variant.id,
-          value: undefined, // You can set a default value or leave it as undefined
+          value: undefined,
         },
       });
     }

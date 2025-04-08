@@ -16,6 +16,7 @@ import {
   deleteFilesSchema,
   deleteOptionValueSchema,
   deleteProductFormFieldsSchema,
+  updateMediaTagSchema,
   updateOptionConfigSchema,
   updateOptionValueSchema,
   updateProductFormFieldsSchema,
@@ -114,6 +115,12 @@ export default defineMiddlewares({
       matcher: "/admin/product-option_config/option-values",
       method: "DELETE",
       middlewares: [validateAndTransformBody(deleteOptionValueSchema)],
+    },
+    // ----- /admin/variant-media_tag -----
+    {
+      matcher: "/admin/variant-media_tag",
+      method: "PUT",
+      middlewares: [validateAndTransformBody(updateMediaTagSchema)],
     },
 
     /* STORE MIDDLEWARES */

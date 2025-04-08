@@ -97,6 +97,13 @@ export const deleteOptionValueSchema = z.object({
 });
 /* END OPTION CONFIG SCHEMAS */
 
+/* START MEDIA TAG SCHEMAS */
+export const updateMediaTagSchema = z.object({
+  id: z.string(),
+  value: z.number().nullable(),
+});
+/* END MEDIA TAG SCHEMAS */
+
 /* STORE SCHEMAS */
 /* START PRODUCT REVIEW SCHEMAS  */
 export const createReviewSchema = z.object({
