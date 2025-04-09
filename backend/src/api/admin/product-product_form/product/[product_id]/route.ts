@@ -1,7 +1,7 @@
 import { AuthenticatedMedusaRequest, MedusaResponse } from "@medusajs/framework/http";
 import getProductFormWorkflow from "../../../../../workflows/product-form/get-product-form";
 
-// GET customization form based on product_id
+// GET product form based on product_id
 export const GET = async (req: AuthenticatedMedusaRequest<{ product_id: string }>, res: MedusaResponse) => {
   const { product_id } = req.params;
 

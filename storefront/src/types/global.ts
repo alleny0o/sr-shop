@@ -22,3 +22,78 @@ export type StoreFreeShippingPrice = StorePrice & {
   target_remaining: number
   remaining_percentage: number
 }
+
+// Types For My Extensions
+export type VariantMedia = {
+  id: string
+  file_id: string
+  product_id: string
+  variant_id: string
+  url: string
+  mime_type: string
+  is_thumbnail: boolean
+  name: string
+  size: number
+}
+
+export type MediaTag = {
+  id: string
+  product_id: string
+  variant_id: string
+  value: number | null
+}
+
+export type ProductForm = {
+  id: string
+  name: string
+  active: boolean
+  fields: ProductFormField[]
+}
+
+export type ProductFormField = {
+  id: string
+  label: string
+  description: string
+  placeholder: string
+  input_type: string
+  max_images: number | null
+  max_file_size: number | null
+  image_ratios: string[] | null
+  required: boolean
+  options: string[] | null
+  image: ProductFormFieldImage | null
+}
+
+export type ProductFormFieldImage = {
+  id: string
+  file_id: string
+  url: string
+  mime_type: string
+  name: string
+  size: number
+}
+
+export type OptionConfig = {
+  id: string
+  option_id: string
+  option_title: string
+  display_type: string
+  is_selected: boolean
+  option_values: OptionConfigValue[]
+}
+
+export type OptionConfigValue = {
+  id: string
+  option_value_id: string
+  color: string | null
+  image: OptionConfigValueImage | null
+}
+
+export type OptionConfigValueImage = {
+  id: string
+  file_id: string
+  url: string
+  mime_type: string
+  name: string
+  size: number
+}
