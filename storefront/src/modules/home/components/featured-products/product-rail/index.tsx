@@ -3,7 +3,7 @@ import { HttpTypes } from "@medusajs/types"
 import { Text } from "@medusajs/ui"
 
 import InteractiveLink from "@modules/common/components/interactive-link"
-import ProductPreview from "@modules/products/components/product-preview"
+import ProductPreview from "@modules/product/components/product-preview"
 
 export default async function ProductRail({
   collection,
@@ -17,6 +17,7 @@ export default async function ProductRail({
   } = await listProducts({
     regionId: region.id,
     queryParams: {
+      // @ts-ignore
       collection_id: collection.id,
       fields: "*variants.calculated_price",
     },

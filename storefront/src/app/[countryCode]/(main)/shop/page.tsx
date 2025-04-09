@@ -1,10 +1,10 @@
 import { Metadata } from "next"
 
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
-import StoreTemplate from "@modules/store/templates"
+import { SortOptions } from "@modules/shop/components/refinement-list/sort-products"
+import ProductsTemplate from "@modules/shop/templates"
 
 export const metadata: Metadata = {
-  title: "Store",
+  title: "Shop",
   description: "Explore all of our products.",
 }
 
@@ -18,13 +18,13 @@ type Params = {
   }>
 }
 
-export default async function StorePage(props: Params) {
+export default async function ProductsPage(props: Params) {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const { sortBy, page } = searchParams
 
   return (
-    <StoreTemplate
+    <ProductsTemplate
       sortBy={sortBy}
       page={page}
       countryCode={params.countryCode}

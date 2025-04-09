@@ -3,9 +3,9 @@ import { Suspense } from "react"
 
 import InteractiveLink from "@modules/common/components/interactive-link"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
-import RefinementList from "@modules/store/components/refinement-list"
-import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
-import PaginatedProducts from "@modules/store/templates/paginated-products"
+import RefinementList from "@modules/shop/components/refinement-list"
+import { SortOptions } from "@modules/shop/components/refinement-list/sort-products"
+import PaginatedProducts from "@modules/shop/templates/paginated-products"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
 

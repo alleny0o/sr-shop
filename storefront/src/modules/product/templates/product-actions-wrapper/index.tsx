@@ -1,6 +1,6 @@
 import { listProducts } from "@lib/data/products"
 import { HttpTypes } from "@medusajs/types"
-import ProductActions from "@modules/products/components/product-actions"
+import ProductActions from "@modules/product/components/product-actions"
 
 /**
  * Fetches real time pricing for a product and renders the product actions component.
@@ -13,6 +13,7 @@ export default async function ProductActionsWrapper({
   region: HttpTypes.StoreRegion
 }) {
   const product = await listProducts({
+    // @ts-ignore
     queryParams: { id: [id] },
     regionId: region.id,
   }).then(({ response }) => response.products[0])
