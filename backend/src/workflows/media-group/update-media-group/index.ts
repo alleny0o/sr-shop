@@ -8,3 +8,5 @@ const updateMediaGroupWorkflow = createWorkflow("update-media-group-workflow", (
 
   return new WorkflowResponse(result);
 });
+
+export default updateMediaGroupWorkflow;

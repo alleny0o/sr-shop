@@ -1,7 +1,7 @@
 import { createStep, StepResponse } from "@medusajs/framework/workflows-sdk";
 import MediaGroupModuleService from "../../../../modules/media-group/service";
 import { MEDIA_GROUP_MODULE } from "../../../../modules/media-group";
-import { MediaGroupType, Media } from "../../types";
+import { MediaGroupType } from "../../types";
 
 export type CreateMediaGroupStepInput = {
   uuid: string;
