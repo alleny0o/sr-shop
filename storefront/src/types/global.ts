@@ -1,4 +1,4 @@
-import { StorePrice } from "@medusajs/types"
+import { HttpTypes, StorePrice } from "@medusajs/types"
 
 export type FeaturedProduct = {
   id: string
@@ -97,3 +97,24 @@ export type OptionConfigValueImage = {
   name: string
   size: number
 }
+
+export type EnrichedVariant = HttpTypes.StoreProductVariant & {
+  medias?: VariantMedia[] | null;
+  media_tag?: MediaTag | null;
+};
+
+export type EnrichedOption = Omit<HttpTypes.StoreProductOption, 'values'> & {
+  values: EnrichedOptionValue[];
+  is_selected?: boolean;
+  display_type?: string;
+};
+
+export type EnrichedOptionValue = HttpTypes.StoreProductOptionValue & {
+  config?: OptionConfigValue | null;
+}
+
+export type EnrichedProduct = Omit<HttpTypes.StoreProduct, 'variants' | 'options'> & {
+  product_form?: ProductForm | null;
+  variants: EnrichedVariant[] | null; 
+  options: EnrichedOption[] | null;
+};

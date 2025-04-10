@@ -6,7 +6,7 @@ import { HttpTypes } from "@medusajs/types"
 import { SortOptions } from "@modules/shop/components/refinement-list/sort-products"
 import { getAuthHeaders, getCacheOptions } from "./cookies"
 import { getRegion, retrieveRegion } from "./regions"
-import { MediaTag, OptionConfig, ProductForm, VariantMedia } from "types/global"
+import { MediaTag, OptionConfig, ProductForm, VariantMedia, EnrichedProduct, EnrichedVariant, EnrichedOption, EnrichedOptionValue } from "types/global"
 
 export const listProducts = async ({
   pageParam = 1,
@@ -19,9 +19,9 @@ export const listProducts = async ({
   countryCode?: string
   regionId?: string
 }): Promise<{
-  response: { products: HttpTypes.StoreProduct[]; count: number }
-  nextPage: number | null
-  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
+  response: { products: EnrichedProduct[]; count: number };
+  nextPage: number | null;
+  queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams;
 }> => {
   if (!countryCode && !regionId) {
     throw new Error("Country code or region ID is required")
@@ -54,8 +54,8 @@ export const listProducts = async ({
     ...(await getCacheOptions("products")),
   }
 
-  const { products, count } = await sdk.client.fetch<{
-    products: HttpTypes.StoreProduct[];
+  const { products, count }: { products: EnrichedProduct[], count: number } = await sdk.client.fetch<{
+    products: EnrichedProduct[];
     count: number;
   }>("/store/products", {
     method: "GET",
@@ -82,16 +82,11 @@ export const listProducts = async ({
 
   const [
     { product_forms },
-    { product_option_configs },
     { variant_medias },
     { media_tags },
   ] = await Promise.all([
     sdk.client.fetch<{ product_forms: { product_id: string; product_form: ProductForm | null }[] }>(
       `/store/product_form?${productIdParams.toString()}`,
-      { method: "GET", next, cache: "force-cache" }
-    ),
-    sdk.client.fetch<{ product_option_configs: { product_id: string; option_configs: OptionConfig[] | null }[] }>(
-      `/store/option_configs?${productIdParams.toString()}`,
       { method: "GET", next, cache: "force-cache" }
     ),
     sdk.client.fetch<{ variant_medias: { variant_id: string; variant_medias: VariantMedia[] | null }[] }>(
@@ -104,24 +99,42 @@ export const listProducts = async ({
     ),
   ]);
 
+  const res = await sdk.client.fetch<{ option_configs: OptionConfig[] | null }>(
+    `/store/option_configs?${productIdParams.toString()}`,
+    { method: "GET", next, cache: "force-cache" }
+  );
+
+  const option_configs = res.option_configs || [];
+
   // Create maps for faster lookup
   const productFormMap = new Map(product_forms.map(({ product_id, product_form }) => [product_id, product_form]));
-  const optionConfigMap = new Map(product_option_configs.map(({ product_id, option_configs }) => [product_id, option_configs]));
   const variantMediaMap = new Map(variant_medias.map(({ variant_id, variant_medias }) => [variant_id, variant_medias]));
   const mediaTagMap = new Map(media_tags.map(({ variant_id, media_tag }) => [variant_id, media_tag]));
 
   // Enrich products
-  products.forEach((product: HttpTypes.StoreProduct & { product_form?: ProductForm | null; option_configs?: OptionConfig[] | null }) => {
+  products.forEach((product: EnrichedProduct) => {
     product.product_form = productFormMap.get(product.id) ?? null;
-    product.option_configs = optionConfigMap.get(product.id) ?? null;
 
-    product.variants?.forEach((variant: HttpTypes.StoreProductVariant & { medias?: VariantMedia[] | null; media_tag?: MediaTag | null }) => {
+    product.variants?.forEach((variant: EnrichedVariant) => {
       variant.medias = variantMediaMap.get(variant.id) ?? null;
       variant.media_tag = mediaTagMap.get(variant.id) ?? null;
     });
+
+    product.options?.forEach((option: EnrichedOption) => {
+      const option_config = option_configs.find((config) => config.option_id === option.id);
+      option.is_selected = option_config?.is_selected ?? false;
+      option.display_type = option_config?.display_type ?? "dropdown";
+      option.values?.forEach((value: EnrichedOptionValue) => {
+        const option_values = option_configs?.flatMap((option_config) => option_config.option_values);
+        const option_value = option_values?.find((option_value) => option_value.option_value_id === value.id);
+        if (option_value) {
+          value.config = option_value;
+        }
+      });
+    });
   });
 
-
+  console.log("Products fetched:", JSON.stringify(products, null, 2));
   const nextPage = count > offset + limit ? pageParam + 1 : null
 
   return {

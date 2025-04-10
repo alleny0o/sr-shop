@@ -1,21 +1,22 @@
-import { clx } from "@medusajs/ui"
+"use client";
 
+import { clx } from "@medusajs/ui"
 import { getProductPrice } from "@lib/util/get-product-price"
-import { HttpTypes } from "@medusajs/types"
+import { EnrichedProduct } from "types/global"
+import { useProductOptionsStore } from "stores/useProductOptionsStore"
 
 export default function ProductPrice({
   product,
-  variant,
 }: {
-  product: HttpTypes.StoreProduct
-  variant?: HttpTypes.StoreProductVariant
+  product: EnrichedProduct
 }) {
+  const { selectedVariant } = useProductOptionsStore();
   const { cheapestPrice, variantPrice } = getProductPrice({
     product,
-    variantId: variant?.id,
+    variantId: selectedVariant?.id,
   })
 
-  const selectedPrice = variant ? variantPrice : cheapestPrice
+  const selectedPrice = selectedVariant ? variantPrice : cheapestPrice
 
   if (!selectedPrice) {
     return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />
@@ -28,7 +29,7 @@ export default function ProductPrice({
           "text-ui-fg-interactive": selectedPrice.price_type === "sale",
         })}
       >
-        {!variant && "From "}
+        {!selectedVariant}
         <span
           data-testid="product-price"
           data-value={selectedPrice.calculated_price_number}

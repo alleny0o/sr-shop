@@ -8,12 +8,12 @@ import X from "@modules/common/icons/x"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import OptionSelect from "./option-select"
-import { HttpTypes } from "@medusajs/types"
 import { isSimpleProduct } from "@lib/util/product"
+import { EnrichedProduct, EnrichedVariant } from "types/global"
 
 type MobileActionsProps = {
-  product: HttpTypes.StoreProduct
-  variant?: HttpTypes.StoreProductVariant
+  product: EnrichedProduct
+  variant?: EnrichedVariant
   options: Record<string, string | undefined>
   updateOptions: (title: string, value: string) => void
   inStock?: boolean

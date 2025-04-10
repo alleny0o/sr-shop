@@ -1,20 +1,19 @@
 import React, { Suspense } from "react"
-
-import ImageGallery from "@modules/product/components/image-gallery"
+import MediaGallery from "@modules/product/components/media-gallery"
 import ProductActions from "@modules/product/components/product-actions"
 import ProductOnboardingCta from "@modules/product/components/product-onboarding-cta"
-import ProductTabs from "@modules/product/components/product-tabs"
 import RelatedProducts from "@modules/product/components/related-products"
-import ProductInfo from "@modules/product/templates/product-info"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
 import { notFound } from "next/navigation"
 import ProductActionsWrapper from "./product-actions-wrapper"
 import { HttpTypes } from "@medusajs/types"
 
 import Breadcrumbs from "components/breadcrumbs"
+import { EnrichedProduct } from "types/global"
+import ProductPrice from "../components/product-price"
 
 type ProductTemplateProps = {
-  product: HttpTypes.StoreProduct
+  product: EnrichedProduct
   region: HttpTypes.StoreRegion
   countryCode: string
 }
@@ -29,36 +28,47 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   }
 
   return (
-    <>
-      <div className="content-container py-2">
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto py-3 px-10">
         <Breadcrumbs productTitle={product.title} />
       </div>
+
+      {/* Product Content Grid */}
       <div
-        className="content-container flex flex-col small:flex-row small:items-start py-6 relative"
+        className="max-w-7xl mx-auto pt-0 pb-6 relative"
         data-testid="product-container"
       >
-        <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6">
-          <ProductInfo product={product} />
-          <ProductTabs product={product} />
-        </div>
-        <div className="block w-full relative">
-          <ImageGallery images={product?.images || []} />
-        </div>
-        <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-12">
-          <ProductOnboardingCta />
-          <Suspense
-            fallback={
-              <ProductActions
-                disabled={true}
-                product={product}
-                region={region}
-              />
-            }
-          >
-            <ProductActionsWrapper id={product.id} region={region} />
-          </Suspense>
+
+        <div className="grid grid-cols-1 small:grid-cols-12 gap-6">
+          {/* Image Gallery - Takes up more space on desktop */}
+          <div className="small:px-10 small:col-span-7 w-full">
+            <MediaGallery product={product} />
+          </div>
+
+          {/* Product Actions - Goes below image on mobile, next to image on desktop */}
+          <div className="px-6 small:col-span-5 small:mt-0 small:px-10">
+            <div className="mb-4">
+              <h1 className="text-3xl font-bold">{product.title}</h1>
+              <ProductPrice product={product} />
+            </div>
+            <div className="small:top-48">
+            <ProductOnboardingCta />
+              <Suspense
+                fallback={
+                  <ProductActions
+                    disabled={true}
+                    product={product}
+                    region={region}
+                  />
+                }
+              >
+                <ProductActionsWrapper id={product.id} region={region} />
+              </Suspense>
+            </div>
+          </div>
         </div>
       </div>
+
       <div
         className="content-container my-16 small:my-32"
         data-testid="related-products-container"
@@ -67,7 +77,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
           <RelatedProducts product={product} countryCode={countryCode} />
         </Suspense>
       </div>
-    </>
+    </div>
   )
 }
 
