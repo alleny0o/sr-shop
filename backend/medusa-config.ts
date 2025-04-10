@@ -110,5 +110,9 @@ module.exports = defineConfig({
     {
       resolve: "./src/modules/media-tag",
     },
+    // media-group
+    {
+      resolve: "./src/modules/media-group",
+    },  
   ],
 });
