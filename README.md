@@ -1,6 +1,6 @@
 # 🛒 🖥️ SR Laserworks – eCommerce Platform
 
-A custom full-stack eCommerce platform built for **S&R Laserworks**, a small business known for handcrafted laser-engraved boards and puzzles.
+A custom full-stack eCommerce platform built for **SR Laserworks**, a small business known for handcrafted laser-engraved boards and puzzles.
 
 This project was created to help Sam & Rachel migrate away from **Etsy** — giving them full control over their brand, user experience, and operations without the limitations or fees of marketplace platforms. Built from the ground up to fit their needs, this site empowers their creativity and scales with their growth.
 
