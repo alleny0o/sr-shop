@@ -9,7 +9,6 @@ import OptionSelect from "@modules/product/components/product-actions/option-sel
 import { isEqual } from "lodash"
 import { useParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
-import MobileActions from "./mobile-actions"
 import { EnrichedProduct, EnrichedVariant } from "types/global"
 
 type ProductActionsProps = {
@@ -155,7 +154,7 @@ export default function ProductActions({
             : "Add to cart"}
         </Button>
 
-        <MobileActions
+        {/* <MobileActions
           product={product}
           variant={selectedVariant}
           options={options}
@@ -165,7 +164,7 @@ export default function ProductActions({
           isAdding={isAdding}
           show={!inView}
           optionsDisabled={!!disabled || isAdding}
-        />
+        /> */}
       </div>
     </>
   )
