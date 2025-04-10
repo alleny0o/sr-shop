@@ -5,7 +5,7 @@ type UpdateProductFormWorkflowInput = UpdateProductFormStepInput;
 
 const updateProductFormWorkflow = createWorkflow(
     'update-product-form-workflow',
-    (input: UpdateProductFormStepInput) => {
+    (input: UpdateProductFormWorkflowInput) => {
         const result = updateProductFormStep(input);
 
         return new WorkflowResponse(result);
