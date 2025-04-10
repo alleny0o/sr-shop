@@ -1,7 +1,7 @@
 import { model } from "@medusajs/framework/utils";
 import MediaGroup from "./media-group";
 
-const Media = model.define("media", {
+const MediaItem = model.define("media_item", {
     id: model.id().primaryKey(),
     file_id: model.text().unique(),
     size: model.number(),
@@ -15,4 +15,4 @@ const Media = model.define("media", {
     }),
 });
 
-export default Media;
+export default MediaItem;

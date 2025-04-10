@@ -39,7 +39,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "mappedType": "text"
         },
         "created_at": {
@@ -219,38 +219,38 @@
           "mappedType": "datetime"
         }
       },
-      "name": "media",
+      "name": "media_item",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_media_file_id_unique",
+          "keyName": "IDX_media_item_file_id_unique",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_media_file_id_unique\" ON \"media\" (file_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_media_item_file_id_unique\" ON \"media_item\" (file_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_media_media_group_id",
+          "keyName": "IDX_media_item_media_group_id",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_media_media_group_id\" ON \"media\" (media_group_id) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_media_item_media_group_id\" ON \"media_item\" (media_group_id) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "IDX_media_deleted_at",
+          "keyName": "IDX_media_item_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_media_deleted_at\" ON \"media\" (deleted_at) WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_media_item_deleted_at\" ON \"media_item\" (deleted_at) WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "media_pkey",
+          "keyName": "media_item_pkey",
           "columnNames": [
             "id"
           ],
@@ -262,12 +262,12 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "media_media_group_id_foreign": {
-          "constraintName": "media_media_group_id_foreign",
+        "media_item_media_group_id_foreign": {
+          "constraintName": "media_item_media_group_id_foreign",
           "columnNames": [
             "media_group_id"
           ],
-          "localTableName": "public.media",
+          "localTableName": "public.media_item",
           "referencedColumnNames": [
             "id"
           ],

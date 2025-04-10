@@ -1,12 +1,12 @@
 import { model } from "@medusajs/framework/utils";
-import Media from "./media";
+import MediaItem from "./media-item";
 
 const MediaGroup = model.define("media_group", {
     id: model.id().primaryKey(),
     uuid: model.text().unique(),
     product_id: model.text(),
-    media_tag: model.text(),
-    medias: model.hasMany(() => Media, {
+    media_tag: model.text().nullable(),
+    medias: model.hasMany(() => MediaItem, {
         mappedBy: "media_group",
     }),
 }).cascades({
