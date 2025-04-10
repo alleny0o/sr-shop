@@ -7,7 +7,6 @@ export type CreateMediaGroupStepInput = {
   uuid: string;
   product_id: string;
   media_tag?: string;
-  medias: Media[];
 };
 
 export type CreateMediaGroupsStepInput = {
@@ -26,21 +25,6 @@ const createMediaGroupsStep = createStep(
         media_tag: g.media_tag ?? null,
       }))
     );
-
-    // Map original UUIDs to their medias
-    const uuidToMediasMap = new Map(media_groups.map((g) => [g.uuid, g.medias]));
-
-    // Flatten all media items to be created, each with the new media_group_id
-    const mediaItemsToCreate = createdMediaGroups.flatMap((group) => {
-      const medias = uuidToMediasMap.get(group.uuid) ?? [];
-      return medias.map((media) => ({
-        ...media,
-        media_group_id: group.id,
-      }));
-    });
-
-    // Now create the media items
-    await mediaGroupModuleService.createMediaItems(mediaItemsToCreate);
 
     return new StepResponse({ media_groups: createdMediaGroups }, { media_groups: createdMediaGroups });
   },

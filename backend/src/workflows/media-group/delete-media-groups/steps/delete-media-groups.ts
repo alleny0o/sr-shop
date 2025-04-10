@@ -12,7 +12,7 @@ const deleteMediaGroupsStep = createStep(
   async ({ media_group_ids }: DeleteMediaGroupsStepInput, { container }) => {
     const mediaGroupModuleService: MediaGroupModuleService = container.resolve(MEDIA_GROUP_MODULE);
 
-    const mediaGroupsToDelete = await mediaGroupModuleService.listMediaGroups(
+    const mediaGroupsToDelete: MediaGroupType[] = await mediaGroupModuleService.listMediaGroups(
       {
         id: media_group_ids,
       },
