@@ -9,10 +9,13 @@ import DeleteButton from "@modules/common/components/delete-button"
 import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/product/components/thumbnail"
 import { useState } from "react"
+import { EnrichedVariant } from "types/global"
+import { useProductOptionsStore } from "stores/useProductOptionsStore"
+import { isEqual } from "lodash"
+import { useRouter, useParams } from "next/navigation"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
@@ -21,8 +24,49 @@ type ItemProps = {
 }
 
 const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
+  const router = useRouter()
+  const { countryCode } = useParams()
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const variant = item.variant as EnrichedVariant | undefined
+
+  const { setAllOptions, setSelectedVariant, setDontChange } =
+    useProductOptionsStore()
+
+  const handleProductClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.preventDefault() // Prevent the immediate navigation
+    if (!variant?.options) return
+
+    // Set the selected options
+    const selectedOptions: Record<string, string> = {}
+    variant.options.forEach((opt) => {
+      if (opt.option_id) {
+        selectedOptions[opt.option_id] = opt.value
+      }
+    })
+
+    setAllOptions(selectedOptions)
+
+    // Find the matching variant and update state
+    const matching = item.product?.variants?.find((v) => {
+      const varOptions = v.options?.reduce((acc: Record<string, string>, o) => {
+        if (o.option_id) {
+          acc[o.option_id] = o.value
+        }
+        return acc
+      }, {} as Record<string, string>)
+      return isEqual(varOptions, selectedOptions)
+    })
+    setSelectedVariant(matching)
+
+    setDontChange(true)
+
+    // Perform client-side navigation, using the countryCode if it exists
+    router.push(`/${countryCode ?? ""}/products/${item.product_handle}`)
+  }
 
   const changeQuantity = async (quantity: number) => {
     setError(null)
@@ -41,25 +85,29 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   }
 
   // TODO: Update this to grab the actual max inventory
-  const maxQtyFromInventory = 10
-  const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
+  const maxQtyFromInventory = variant?.inventory_quantity || 0
+  const maxQuantity = Math.min(maxQtyFromInventory, 10)
 
   return (
     <Table.Row className="w-full" data-testid="product-row">
       <Table.Cell className="!pl-0 p-4 w-24">
-        <LocalizedClientLink
-          href={`/products/${item.product_handle}`}
-          className={clx("flex", {
+        <div
+          onClick={handleProductClick}
+          className={clx("flex cursor-pointer", {
             "w-16": type === "preview",
             "small:w-24 w-12": type === "full",
           })}
         >
           <Thumbnail
-            thumbnail={item.thumbnail}
-            images={item.variant?.product?.images}
+            thumbnail={
+              variant?.medias?.[0]?.url ??
+              item.thumbnail ??
+              item.variant?.product?.images?.[0]?.url ??
+              null
+            }
             size="square"
           />
-        </LocalizedClientLink>
+        </div>
       </Table.Cell>
 
       <Table.Cell className="text-left">
@@ -83,20 +131,11 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
               data-testid="product-select-button"
             >
               {/* TODO: Update this with the v2 way of managing inventory */}
-              {Array.from(
-                {
-                  length: Math.min(maxQuantity, 10),
-                },
-                (_, i) => (
-                  <option value={i + 1} key={i}>
-                    {i + 1}
-                  </option>
-                )
-              )}
-
-              <option value={1} key={1}>
-                1
-              </option>
+              {Array.from({ length: Math.min(maxQuantity, 10) }, (_, i) => (
+                <option value={i + 1} key={i}>
+                  {i + 1}
+                </option>
+              ))}
             </CartItemSelect>
             {updating && <Spinner />}
           </div>

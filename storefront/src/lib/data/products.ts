@@ -13,11 +13,13 @@ export const listProducts = async ({
   queryParams,
   countryCode,
   regionId,
+  trimmed = false,
 }: {
   pageParam?: number
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
   countryCode?: string
   regionId?: string
+  trimmed: boolean
 }): Promise<{
   response: { products: EnrichedProduct[]; count: number };
   nextPage: number | null;
@@ -63,13 +65,15 @@ export const listProducts = async ({
       limit,
       offset,
       region_id: region.id,
-      fields: "*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags",
+      fields: `*variants.calculated_price,+variants.inventory_quantity,+metadata,+tags`,
       ...queryParams,
     },
     headers,
     next,
     cache: "force-cache",
   });
+
+  // console.log(JSON.stringify(products, null, 2));
 
   const productIds = products.map((p) => p.id);
   const variantIds = products.flatMap((p) => p.variants?.map((v) => v.id) || []);
@@ -79,6 +83,10 @@ export const listProducts = async ({
 
   const variantIdParams = new URLSearchParams();
   variantIds.forEach((id) => variantIdParams.append("ids[]", id));
+
+  const variantMediasEndpoint = trimmed
+  ? `/store/variant_medias/trimmed?${variantIdParams.toString()}`
+  : `/store/variant_medias?${variantIdParams.toString()}`;
 
   const [
     { product_forms },
@@ -90,7 +98,7 @@ export const listProducts = async ({
       { method: "GET", next, cache: "force-cache" }
     ),
     sdk.client.fetch<{ variant_medias: { variant_id: string; variant_medias: VariantMedia[] | null }[] }>(
-      `/store/variant_medias?${variantIdParams.toString()}`,
+      variantMediasEndpoint,
       { method: "GET", next, cache: "force-cache" }
     ),
     sdk.client.fetch<{ media_tags: { variant_id: string; media_tag: MediaTag | null }[] }>(
@@ -134,7 +142,6 @@ export const listProducts = async ({
     });
   });
 
-  console.log("Products fetched:", JSON.stringify(products, null, 2));
   const nextPage = count > offset + limit ? pageParam + 1 : null
 
   return {
@@ -156,11 +163,13 @@ export const listProductsWithSort = async ({
   queryParams,
   sortBy = "created_at",
   countryCode,
+  trimmed = false,
 }: {
   page?: number
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
   sortBy?: SortOptions
   countryCode: string
+  trimmed: boolean
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
@@ -177,6 +186,7 @@ export const listProductsWithSort = async ({
       limit: 100,
     },
     countryCode,
+    trimmed,
   })
 
   const sortedProducts = sortProducts(products, sortBy)

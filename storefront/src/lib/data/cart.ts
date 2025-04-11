@@ -15,6 +15,9 @@ import {
 } from "./cookies"
 import { getRegion } from "./regions"
 
+import { getEnrichedVariantData } from "./variants"
+import { EnrichedVariant } from "types/global"
+
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
  * @param cartId - optional - The ID of the cart to retrieve.
@@ -22,10 +25,7 @@ import { getRegion } from "./regions"
  */
 export async function retrieveCart(cartId?: string) {
   const id = cartId || (await getCartId())
-
-  if (!id) {
-    return null
-  }
+  if (!id) return null
 
   const headers = {
     ...(await getAuthHeaders()),
@@ -35,7 +35,7 @@ export async function retrieveCart(cartId?: string) {
     ...(await getCacheOptions("carts")),
   }
 
-  return await sdk.client
+  const response = await sdk.client
     .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
       method: "GET",
       query: {
@@ -46,8 +46,53 @@ export async function retrieveCart(cartId?: string) {
       next,
       cache: "force-cache",
     })
-    .then(({ cart }) => cart)
     .catch(() => null)
+
+  if (!response) return null
+
+  const cart = response.cart
+  if (!cart.items || cart.items.length === 0) return cart
+
+  // Group variant_ids by product_id
+  const productVariantsMap: Record<string, string[]> = {}
+  for (const item of cart.items) {
+    if (!item.product_id || !item.variant_id) continue
+    if (!productVariantsMap[item.product_id]) {
+      productVariantsMap[item.product_id] = []
+    }
+    productVariantsMap[item.product_id].push(item.variant_id)
+  }
+
+  // Fetch enriched data: inventory, options, medias
+  const enrichedData = await Promise.all(
+    Object.entries(productVariantsMap).map(([product_id, variant_ids]) =>
+      getEnrichedVariantData(product_id, variant_ids)
+    )
+  )
+
+  const flatEnriched = enrichedData.flat()
+  const enrichedMap = Object.fromEntries(
+    flatEnriched.map((v) => [v.variant_id, v])
+  )
+
+  // Inject into cart items
+  for (const item of cart.items) {
+    const variantId = item.variant?.id
+    if (!variantId) continue
+    if (!item.variant || !item.variant.id) continue
+
+    const enriched = enrichedMap[variantId]
+    if (!enriched) continue
+
+    const variant = item.variant as EnrichedVariant
+
+    variant.inventory_quantity = enriched.inventory_quantity
+    variant.options = enriched.options
+    variant.medias = enriched.medias
+  }
+
+  console.log(JSON.stringify(cart, null, 2))
+  return cart
 }
 
 export async function getOrSetCart(countryCode: string) {

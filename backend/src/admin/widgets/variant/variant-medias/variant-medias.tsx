@@ -36,7 +36,7 @@ const VariantMediasWidget = ({ data }: DetailWidgetProps<AdminProductVariant>) =
   } = useQuery({
     queryKey: ["variant-medias", data.id],
     queryFn: () => {
-      return sdk.client.fetch<{ variant_medias: Media[] }>(`/admin/product-variant_medias/variant/${data.id}`);
+      return sdk.client.fetch<{ variant_medias: Media[] }>(`/admin/product_variant-medias/variant/${data.id}`);
     },
     refetchOnMount: "always",
   });

@@ -24,51 +24,6 @@ export const createVariantMediasSchema = z.object({
 });
 /* END VARIANT MEDIAS SCHEMAS  */
 
-/* START MEDIA GROUP SCHEMAS */
-export const createMediaGroupsSchema = z.object({
-  media_groups: z.array(
-    z.object({
-      uuid: z.string(),
-      product_id: z.string(),
-      media_tag: z.string().optional(),
-    }),
-  ),
-});
-
-export const updateMediaGroupsSchema = z.object({
-  media_groups: z.array(
-    z.object({
-      id: z.string(),
-      media_tag: z.string().optional(),
-    }),
-  ),
-});
-
-export const deleteMediaGroupsSchema = z.object({
-  media_group_ids: z.array(z.string()),
-});
-
-export const createMediaItemsSchema = z.object({
-  media_items: z.object({
-    media_group_id: z.string(),
-    medias: z.array(
-      z.object({
-        file_id: z.string(),
-        name: z.string(),
-        size: z.number(),
-        mime_type: z.string(),
-        is_thumbnail: z.boolean(),
-        url: z.string(),
-      }),
-    ),
-  }),
-});
-
-export const deleteMediaItemsSchema = z.object({
-  media_group_id: z.string(),
-});
-/* END MEDIA GROUP SCHEMAS */
-
 /* START PRODUCT FORM SCHEMAS  */
 export const updateProductFormSchema = z.object({
   id: z.string(),

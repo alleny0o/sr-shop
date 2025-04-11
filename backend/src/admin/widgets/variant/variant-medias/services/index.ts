@@ -54,7 +54,7 @@ export const deleteMediaFiles = async (file_ids: string[]): Promise<void> => {
 // Update Variant Medias On Server
 export const updateVariantMedias = async (variant_medias: Media[], variant_id: string): Promise<void> => {
     // Remove Existing Medias From Variant
-    const delete_response = await fetch(`/admin/product-variant_medias/variant/${variant_id}`, {
+    const delete_response = await fetch(`/admin/product_variant-medias/variant/${variant_id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
@@ -64,7 +64,7 @@ export const updateVariantMedias = async (variant_medias: Media[], variant_id: s
     };
 
     // Add Updated Medias To Variant
-    const create_response = await fetch(`/admin/product-variant_medias`, {
+    const create_response = await fetch(`/admin/product_variant-medias`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ variant_medias }),

@@ -35,12 +35,19 @@ export default function ProductActions({
     selectedVariant,
     setSelectedVariant,
     resetOptions,
+    dontChange,
+    setDontChange,
   } = useProductOptionsStore()
 
   const [isAdding, setIsAdding] = useState(false)
   const countryCode = useParams().countryCode as string
 
   useEffect(() => {
+    if (Object.keys(options).length > 0 && dontChange) {
+      setDontChange(false)
+      return
+    }
+
     resetOptions()
 
     if (product.options && product.options.length > 0) {
@@ -97,6 +104,7 @@ export default function ProductActions({
   const inView = useIntersection(actionsRef, "0px")
 
   const handleAddToCart = async () => {
+    setDontChange(true)
     if (!selectedVariant?.id) return null
 
     setIsAdding(true)
