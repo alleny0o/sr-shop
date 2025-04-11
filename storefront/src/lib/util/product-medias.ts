@@ -4,6 +4,7 @@ type MediaReturn = {
   id: string;
   url: string;
   name: string;
+  is_thumbnail?: boolean;
   mime_type: "image" | "video";
 };
 
@@ -37,6 +38,7 @@ export function getProductDisplayMedia(
           id: m.id,
           url: m.url,
           name: m.name ?? `Media [${i + 1}]`,
+          is_thumbnail: m.is_thumbnail,
           mime_type: m.mime_type?.startsWith("image") ? "image" : "video",
         })),
       };
@@ -61,6 +63,7 @@ export function getProductDisplayMedia(
           id: m.id,
           url: m.url,
           name: m.name ?? `Media [${i + 1}]`,
+          is_thumbnail: m.is_thumbnail,
           mime_type: m.mime_type?.startsWith("image") ? "image" : "video",
         })),
       };

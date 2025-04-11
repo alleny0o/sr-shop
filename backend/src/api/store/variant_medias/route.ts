@@ -22,14 +22,10 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
               if (!vm) return null;
               return {
                 id: vm.id,
-                file_id: vm.file_id,
-                product_id: vm.product_id,
-                variant_id: vm.variant_id,
                 url: vm.url,
                 mime_type: vm.mime_type,
                 is_thumbnail: vm.is_thumbnail,
                 name: vm.name,
-                size: vm.size,
               };
             })
           : null,

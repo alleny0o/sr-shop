@@ -23,11 +23,7 @@ export const GET = async (req: AuthenticatedMedusaRequest, res: MedusaResponse) 
           image: value.image
             ? {
                 id: value.image.id,
-                file_id: value.image.file_id,
                 url: value.image.url,
-                mime_type: value.image.mime_type,
-                name: value.image.name,
-                size: value.image.size,
               }
             : null,
         })),

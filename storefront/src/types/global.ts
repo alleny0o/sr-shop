@@ -26,14 +26,10 @@ export type StoreFreeShippingPrice = StorePrice & {
 // Types For My Extensions
 export type VariantMedia = {
   id: string
-  file_id: string
-  product_id: string
-  variant_id: string
   url: string
   mime_type: string
   is_thumbnail: boolean
   name: string
-  size: number
 }
 
 export type MediaTag = {
@@ -91,11 +87,7 @@ export type OptionConfigValue = {
 
 export type OptionConfigValueImage = {
   id: string
-  file_id: string
   url: string
-  mime_type: string
-  name: string
-  size: number
 }
 
 export type EnrichedVariant = HttpTypes.StoreProductVariant & {

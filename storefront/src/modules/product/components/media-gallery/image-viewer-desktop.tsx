@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Play } from "lucide-react"
@@ -16,6 +16,17 @@ type Props = {
 
 const ImageViewerDesktop = ({ medias }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    if (currentIndex >= medias.length) {
+      setCurrentIndex(0)
+    }
+  }, [medias])
+
+  if (!medias || medias.length === 0 || !medias[currentIndex]) {
+    return null
+  }
+  
 
   return (
     <div className="hidden small:block relative">
