@@ -11,7 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 // JS SDK
 import { sdk } from "../../../lib/config";
 
-// Context
+// uuid
+import { v4 as uuidv4 } from 'uuid';
 
 // Local Types
 import { MediaGroup, MediaItem, MediaGroupType } from "./types";
@@ -20,6 +21,7 @@ import { MediaGroup, MediaItem, MediaGroupType } from "./types";
 import { SectionWrapper } from "../../../components/section-wrapper";
 import { SectionLoader } from "../../../components/section-loader";
 import { SectionText } from "../../../components/section-text";
+import { MediaGroupModal } from "./modals/media-group-modal";
 
 const MediaGroupsWidget = ({ data }: DetailWidgetProps<AdminProduct>) => {
   // Media Groups State
@@ -52,7 +54,7 @@ const MediaGroupsWidget = ({ data }: DetailWidgetProps<AdminProduct>) => {
           name: media.name,
           mime_type: media.mime_type,
           is_thumbnail: media.is_thumbnail,
-        })),
+        })) as MediaItem[],
       }));
       setMediaGroups(data);
     }
@@ -77,9 +79,17 @@ const MediaGroupsWidget = ({ data }: DetailWidgetProps<AdminProduct>) => {
     );
   }
 
+  // since we are creating a new Media Group, we need default value.
+  const newMediaGroup: MediaGroup = {
+    uuid: uuidv4(),
+    product_id: data.id,
+    media_tag: undefined,
+    medias: [],
+  }
+
   return (
     <>
-      <SectionWrapper heading="Media Groups">
+      <SectionWrapper heading="Media Groups" component={<MediaGroupModal mediaGroup={newMediaGroup} mediaGroups={mediaGroups} type="create" />}>
         {mediaGroups.length > 0 ? (
           <div>Lmao</div>
         ) : (

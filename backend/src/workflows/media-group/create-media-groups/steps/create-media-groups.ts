@@ -18,13 +18,20 @@ const createMediaGroupsStep = createStep(
   async ({ media_groups }: CreateMediaGroupsStepInput, { container }) => {
     const mediaGroupModuleService: MediaGroupModuleService = container.resolve(MEDIA_GROUP_MODULE);
 
-    const createdMediaGroups: MediaGroupType[] = await mediaGroupModuleService.createMediaGroups(
-      media_groups.map((g) => ({
-        uuid: g.uuid,
-        product_id: g.product_id,
-        media_tag: g.media_tag ?? null,
-      }))
-    );
+    let createdMediaGroups: MediaGroupType[] = [];
+
+    try {
+      createdMediaGroups = await mediaGroupModuleService.createMediaGroups(
+        media_groups.map((g) => ({
+          uuid: g.uuid,
+          product_id: g.product_id,
+          media_tag: g.media_tag ?? null,
+        }))
+      );
+    } catch (err) {
+      console.error("Failed to create media groups:", err);
+      // Optionally show toast or fallback logic here
+    }
 
     return new StepResponse({ media_groups: createdMediaGroups }, { media_groups: createdMediaGroups });
   },

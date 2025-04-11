@@ -8,7 +8,7 @@ type MediaGroupInput = {
   medias: MediaItem[];
 };
 export type CreateMediaItemsStepInput = {
-  media_items: MediaGroupInput[];
+  media_items: MediaGroupInput;
 };
 
 const createMediaItemsStep = createStep(
@@ -16,7 +16,17 @@ const createMediaItemsStep = createStep(
   async ({ media_items }: CreateMediaItemsStepInput, { container }) => {
     const mediaGroupModuleService: MediaGroupModuleService = container.resolve(MEDIA_GROUP_MODULE);
 
-    const createdMediaItems: MediaItemType[] = await mediaGroupModuleService.createMediaItems(media_items);
+    const mediaItemsToCreate = media_items.medias.map(item => ({
+      media_group_id: media_items.media_group_id,
+      file_id: item.file_id,
+      name: item.name,
+      size: item.size,
+      mime_type: item.mime_type,
+      is_thumbnail: item.is_thumbnail,
+      url: item.url,
+    }));
+
+    const createdMediaItems: MediaItemType[] = await mediaGroupModuleService.createMediaItems(mediaItemsToCreate);
 
     return new StepResponse(createdMediaItems, createdMediaItems);
   },

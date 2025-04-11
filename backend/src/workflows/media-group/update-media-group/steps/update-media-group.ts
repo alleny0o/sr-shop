@@ -3,8 +3,10 @@ import MediaGroupModuleService from "../../../../modules/media-group/service";
 import { MEDIA_GROUP_MODULE } from "../../../../modules/media-group";
 
 export type UpdateMediaGroupStepInput = {
-  id: string;
-  media_tag?: string;
+  media_groups: {
+    id: string;
+    media_tag?: string;
+  }[];
 };
 
 const updateMediaGroupStep = createStep(
@@ -12,24 +14,28 @@ const updateMediaGroupStep = createStep(
   async (input: UpdateMediaGroupStepInput, { container }) => {
     const mediaGroupModuleService: MediaGroupModuleService = container.resolve(MEDIA_GROUP_MODULE);
 
-    const mediaGroup = await mediaGroupModuleService.retrieveMediaGroup(input.id);
+    const mediaGroups = await mediaGroupModuleService.listMediaGroups({ id: input.media_groups.map((o) => o.id) });
 
-    const updatedMediaGroup = await mediaGroupModuleService.updateMediaGroups({
-      id: input.id,
-      media_tag: input.media_tag,
-    });
+    const updatedMediaGroup = await mediaGroupModuleService.updateMediaGroups(
+      input.media_groups.map((g) => ({
+        id: g.id,
+        media_tag: g.media_tag,
+      }))
+    );
 
-    return new StepResponse(updatedMediaGroup, mediaGroup);
+    return new StepResponse(updatedMediaGroup, mediaGroups);
   },
-  async (mediaGroup, { container }) => {
+  async (mediaGroups, { container }) => {
     const mediaGroupModuleService: MediaGroupModuleService = container.resolve(MEDIA_GROUP_MODULE);
 
-    if (!mediaGroup) return;
+    if (!mediaGroups) return;
 
-    await mediaGroupModuleService.updateMediaGroups({
-      id: mediaGroup.id,
-      media_tag: mediaGroup.media_tag,
-    });
+    await mediaGroupModuleService.updateMediaGroups(
+      mediaGroups.map((g) => ({
+        id: g.id,
+        media_tag: g.media_tag,
+      }))
+    );
   }
 );
 

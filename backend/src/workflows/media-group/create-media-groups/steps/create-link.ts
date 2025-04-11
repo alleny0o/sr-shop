@@ -18,7 +18,7 @@ const createRemoteLinkStep = createStep(
         for (const media_group of media_groups) {
             links.push({
                 [Modules.PRODUCT]: {
-                    media_group_id: media_group.product_id,
+                    product_id: media_group.product_id,
                 },
                 [MEDIA_GROUP_MODULE]: {
                     media_group_id: media_group.id,

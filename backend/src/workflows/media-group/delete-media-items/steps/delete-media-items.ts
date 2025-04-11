@@ -4,14 +4,17 @@ import { MEDIA_GROUP_MODULE } from "../../../../modules/media-group";
 import { MediaItemType } from "../../types";
 
 export type DeleteMediaItemsStepInput = {
-  media_item_ids: string[];
+  media_group_id: string;
 };
 
 const deleteMediaItemsStep = createStep(
   "delete-media-items-step",
-  async ({ media_item_ids }: DeleteMediaItemsStepInput, { container }) => {
+  async ({ media_group_id }: DeleteMediaItemsStepInput, { container }) => {
     const mediaGroupModuleService: MediaGroupModuleService = container.resolve(MEDIA_GROUP_MODULE);
 
+    const mediaGroup = await mediaGroupModuleService.retrieveMediaGroup(media_group_id, { relations: ["medias"] });
+
+    const media_item_ids: string[] = mediaGroup.medias.map((m) => m.id);
     const mediaItemsToDelete = await mediaGroupModuleService.listMediaItems({
       id: media_item_ids,
     });

@@ -10,12 +10,16 @@ import {
 
 // schemas
 import {
+  createMediaGroupsSchema,
+  createMediaItemsSchema,
   createProductFormFieldsSchema,
   createReviewSchema,
   createVariantMediasSchema,
   deleteFilesSchema,
+  deleteMediaItemsSchema,
   deleteOptionValueSchema,
   deleteProductFormFieldsSchema,
+  updateMediaGroupsSchema,
   updateMediaTagSchema,
   updateOptionConfigSchema,
   updateOptionValueSchema,
@@ -55,6 +59,29 @@ export default defineMiddlewares({
       method: "POST",
       middlewares: [validateAndTransformBody(createVariantMediasSchema)],
     },
+
+    // ----- /admin/product-media_groups -----
+    {
+      matcher: "/admin/product-media_groups/media-groups",
+      method: "POST",
+      middlewares: [validateAndTransformBody(createMediaGroupsSchema)],
+    },
+    {
+      matcher: "/admin/product-media_groups/media-groups",
+      method: "PUT",
+      middlewares: [validateAndTransformBody(updateMediaGroupsSchema)],
+    },
+    {
+      matcher: "/admin/product-media_groups/media-items",
+      method: "POST",
+      middlewares: [validateAndTransformBody(createMediaItemsSchema)],
+    },
+    {
+      matcher: "/admin/product-media_groups/media-items",
+      method: "DELETE",
+      middlewares: [validateAndTransformBody(deleteMediaItemsSchema)],
+    },
+
     // ----- /admin/product-review -----
     {
       matcher: "/admin/product-review",

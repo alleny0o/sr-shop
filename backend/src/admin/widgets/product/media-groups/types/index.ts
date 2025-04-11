@@ -10,13 +10,19 @@ export type MediaItem = {
   name: string;
   mime_type: string;
   is_thumbnail: boolean;
+  url: string;
   file?: File;
 };
 
 export type MediaGroup = {
   id?: string;
   product_id: string;
-  uuid: string;
   media_tag?: string;
   medias: MediaItem[];
+};
+
+export type PlainMediaGroup = {
+  id?: string;
+  product_id: string;
+  media_tag?: string;
 };

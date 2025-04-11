@@ -3,10 +3,10 @@ import updateMediaGroupStep, { UpdateMediaGroupStepInput } from "./steps/update-
 
 type UpdateMediaGroupWorkflowInput = UpdateMediaGroupStepInput;
 
-const updateMediaGroupWorkflow = createWorkflow("update-media-group-workflow", (input: UpdateMediaGroupWorkflowInput) => {
+const updateMediaGroupsWorkflow = createWorkflow("update-media-group-workflow", (input: UpdateMediaGroupWorkflowInput) => {
   const result = updateMediaGroupStep(input);
 
   return new WorkflowResponse(result);
 });
 
-export default updateMediaGroupWorkflow;
+export default updateMediaGroupsWorkflow;

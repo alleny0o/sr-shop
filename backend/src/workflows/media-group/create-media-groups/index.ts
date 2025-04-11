@@ -6,7 +6,7 @@ type CreateMediaGroupsWorkflowInput = {
   media_groups: CreateMediaGroupStepInput[];
 };
 
-const createVariantMediasWorkflow = createWorkflow("create-media-groups-workflow", (input: CreateMediaGroupsWorkflowInput) => {
+const createMediaGroupsWorkflow = createWorkflow("create-media-groups-workflow", (input: CreateMediaGroupsWorkflowInput) => {
     const { media_groups } = input;
     const { media_groups: created_groups } = createMediaGroupsStep({ media_groups });
     createRemoteLinkStep({ media_groups: created_groups });
@@ -15,4 +15,4 @@ const createVariantMediasWorkflow = createWorkflow("create-media-groups-workflow
   }
 );
 
-export default createVariantMediasWorkflow;
+export default createMediaGroupsWorkflow;

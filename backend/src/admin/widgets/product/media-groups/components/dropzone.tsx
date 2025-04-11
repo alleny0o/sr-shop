@@ -9,32 +9,25 @@ import { useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 
 // Local Types
-import { Media } from "../types";
-
-// context
-import { useVariantContext } from "../context/variant-context";
+import { MediaItem } from "../types";
 
 type DropzoneProps = {
-  editedVariantMedias: Media[];
-  setEditedVariantMedias: (medias: Media[]) => void;
+  editedMediaItems: MediaItem[];
+  setEditedMediaItems: (mediaItems: MediaItem[]) => void;
 };
 
 export const Dropzone = (input: DropzoneProps) => {
-  // context used
-  const variant = useVariantContext();
+  // Props
+  const { editedMediaItems, setEditedMediaItems } = input;
 
-  // props
-  const { editedVariantMedias, setEditedVariantMedias } = input;
-
+  // Handlers
   // handlers
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (acceptedFiles.length === 0) return;
 
-      const newMedias: Media[] = acceptedFiles.map((file) => ({
+      const newMediaItems: MediaItem[] = acceptedFiles.map((file) => ({
         file_id: URL.createObjectURL(file),
-        product_id: variant.product_id,
-        variant_id: variant.variant_id,
         name: file.name,
         size: file.size,
         mime_type: file.type,
@@ -43,9 +36,9 @@ export const Dropzone = (input: DropzoneProps) => {
         file,
       }));
 
-      setEditedVariantMedias([...editedVariantMedias, ...newMedias]);
+      setEditedMediaItems([...editedMediaItems, ...newMediaItems]);
     },
-    [editedVariantMedias, setEditedVariantMedias]
+    [editedMediaItems, setEditedMediaItems]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -60,13 +53,13 @@ export const Dropzone = (input: DropzoneProps) => {
   // Cleanup URLs to prevent memory leaks
   useEffect(() => {
     return () => {
-        editedVariantMedias.forEach((media) => {
+      editedMediaItems.forEach((media) => {
         if (media.file_id) {
           URL.revokeObjectURL(media.file_id);
         }
       });
     };
-  }, [editedVariantMedias]);
+  }, [editedMediaItems]);
 
   return (
     <>
@@ -80,7 +73,7 @@ export const Dropzone = (input: DropzoneProps) => {
               <p className="font-normal font-sans txt-compact-small text-ui-fg-muted">(Optional)</p>
             </div>
             <span className="txt-small text-ui-fg-subtle">
-              Add media to this media group to showcase it in your storefront.
+            Add media to this media group to showcase it in your storefront.
             </span>
           </div>
           <div
