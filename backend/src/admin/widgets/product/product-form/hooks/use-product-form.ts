@@ -301,5 +301,7 @@ export const useProductForm = (input: UseProductFormProps) => {
     setPromptVisible,
     saving,
     watchFields,
+    isFormDirty,
+    isFieldsDirty,
   };
 };

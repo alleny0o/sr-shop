@@ -7,6 +7,7 @@ const OptionConfig = model.define('option_config', {
     option_id: model.text().unique(),
     option_title: model.text(),
     is_selected: model.boolean(),
+    is_primary_option: model.boolean().default(false),
     display_type: model.enum(["buttons", "dropdown", "colors", "images"]).default("buttons"),
     option_values: model.hasMany(() => OptionValue, {
         mappedBy: "option_config",

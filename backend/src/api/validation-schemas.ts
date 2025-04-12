@@ -1,3 +1,4 @@
+import { INSPECT_MAX_BYTES } from "buffer";
 import { z } from "zod";
 
 /* ADMIN SCHEMAS */
@@ -77,6 +78,7 @@ export const updateOptionConfigSchema = z.object({
   option_title: z.string().optional(),
   display_type: z.any().optional(),
   is_selected: z.boolean().optional(),
+  is_primary_option: z.boolean().optional(),
 });
 
 export const updateOptionValueSchema = z.object({

@@ -64,6 +64,7 @@ export const MediaTagDrawer = ({
     useCallback(
       async (data: Form) => {
         setSaving(true);
+        
         try {
           if (data.value === value) {
             toast.success("Media tag was successfully updated.");
@@ -131,7 +132,7 @@ export const MediaTagDrawer = ({
               />
               {form.formState.errors.value && (
                 <p className="text-red-700 text-xs">
-                  {form.formState.errors.value.message}
+                  {"ERROR: " + form.formState.errors.value.message}
                 </p>
               )}
             </div>

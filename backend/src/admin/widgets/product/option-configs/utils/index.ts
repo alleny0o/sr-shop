@@ -11,6 +11,7 @@ export const hasOptionConfigChanged = (a: OptionConfig | null, b: OptionConfig |
   if (!a || !b) return false;
   if (a.display_type !== b.display_type) return true;
   if (a.is_selected !== b.is_selected) return true;
+  if (a.is_primary_option !== b.is_primary_option) return true;
   return false;
 };
 

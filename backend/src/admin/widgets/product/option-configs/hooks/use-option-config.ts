@@ -5,6 +5,9 @@ import { OptionConfig } from "../types";
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
+// Context
+import { useOptionConfigsContext } from "../context/option-configs-context";
+
 // UI Components
 import { toast } from "@medusajs/ui";
 
@@ -20,6 +23,8 @@ type UseOptionConfigProps = {
 };
 
 export const useOptionConfig = ({ optionConfig, setOpen }: UseOptionConfigProps) => {
+  const configs = useOptionConfigsContext();
+
   const queryClient = useQueryClient();
 
   const [updatedOptionConfig, setUpdatedOptionConfig] = useState<OptionConfig>(optionConfig);
@@ -30,6 +35,10 @@ export const useOptionConfig = ({ optionConfig, setOpen }: UseOptionConfigProps)
 
   const [promptVisible, setPromptVisible] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const hasAnotherPrimaryOption = () => {
+    return configs.some((config) => config.id !== updatedOptionConfig.id && config.is_primary_option === true);
+  };
 
   const handleDisplayTypeChange = (displayType: OptionConfig["display_type"]) => {
     setUpdatedOptionConfig((prev) => ({
@@ -45,6 +54,13 @@ export const useOptionConfig = ({ optionConfig, setOpen }: UseOptionConfigProps)
     }));
   };
 
+  const handleIsPrimaryOptionChange = (isPrimary: OptionConfig["is_primary_option"]) => {
+    setUpdatedOptionConfig((prev) => ({
+      ...prev,
+      is_primary_option: isPrimary,
+    }));
+  };
+
   const handleSave = async () => {
     if (!hasChanged(optionConfig, updatedOptionConfig)) {
       toast.success("Option configuration was successfully updated.");
@@ -52,7 +68,17 @@ export const useOptionConfig = ({ optionConfig, setOpen }: UseOptionConfigProps)
       return;
     }
 
+    if (updatedOptionConfig.is_primary_option && hasAnotherPrimaryOption()) {
+      toast.error("Another primary option already exists. You cannot have more than 1 primary options.");
+      return;
+    }
+
     setSaving(true);
+
+    if (updatedOptionConfig.is_primary_option && hasAnotherPrimaryOption()) {
+      setSaving(false);
+      return;
+    }
 
     try {
       if (hasOptionConfigChanged(optionConfig, updatedOptionConfig)) await updateOptionCofig(updatedOptionConfig);
@@ -88,10 +114,10 @@ export const useOptionConfig = ({ optionConfig, setOpen }: UseOptionConfigProps)
     setUpdatedOptionConfig,
     handleDisplayTypeChange,
     handleIsSelectedChange,
+    handleIsPrimaryOptionChange,
     handleSave,
     saving,
     promptVisible,
     setPromptVisible,
   };
-
 };

@@ -13,6 +13,7 @@ export const updateOptionCofig = async (optionConfig: OptionConfig) => {
       option_title: optionConfig.option_title,
       display_type: optionConfig.display_type,
       is_selected: optionConfig.is_selected,
+      is_primary_option: optionConfig.is_primary_option,
     },
   });
 };

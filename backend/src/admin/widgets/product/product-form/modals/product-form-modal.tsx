@@ -17,6 +17,7 @@ import { FieldContext } from "../context/field-context";
 import { FormFieldWrapper } from "../components/form-field-wrapper";
 import { ConfirmPrompt } from "../../../../components/confirm-prompt";
 import { LivePreview } from "../components/live-preview";
+import { useEffect } from "react";
 
 type ProductFormModalProps = {
   product_id: string;
@@ -31,21 +32,38 @@ export const ProductFormModal = ({ product_id, productForm, focusModal, setFocus
     fields,
     remove,
     handleAddField,
-    handleCancel,
     handleReset,
     handleSave,
     promptVisible,
     setPromptVisible,
     saving,
     watchFields,
+    isFormDirty,
+    isFieldsDirty,
   } = useProductForm({
     productForm,
     product_id,
     onCloseModal: () => setFocusModal(false),
   });
 
+  useEffect(() => {
+    if (!focusModal) {
+      document.body.style.pointerEvents = "auto"; // restore pointer interaction
+      document.body.style.overflow = "auto"; 
+    }
+  }, [focusModal]);
+
+  const handleCancel = () => {
+    if (isFormDirty() || isFieldsDirty()) {
+      setPromptVisible(true);
+    } else {
+      setFocusModal(false);
+    };
+  };
+
   return (
     <>
+    {focusModal && (
       <FocusModal open={focusModal} onOpenChange={handleCancel}>
         <FocusModal.Content>
           <FocusModal.Header>
@@ -125,6 +143,7 @@ export const ProductFormModal = ({ product_id, productForm, focusModal, setFocus
           </FocusModal.Body>
         </FocusModal.Content>
       </FocusModal>
+      )}
 
       <ConfirmPrompt
         title="Are you sure you want to leave this form?"

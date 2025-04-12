@@ -61,6 +61,7 @@ const OptionConfigsWidget = ({ data }: DetailWidgetProps<AdminProduct>) => {
               option_title: optionConfig.option_title,
               display_type: optionConfig.display_type,
               is_selected: optionConfig.is_selected,
+              is_primary_option: optionConfig.is_primary_option,
               option_values: optionConfig.option_values.map((optionValue) => ({
                 id: optionValue.id,
                 option_value_id: optionValue.option_value_id,

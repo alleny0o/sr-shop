@@ -8,6 +8,7 @@ export type UpdateOptionConfigStepInput = {
   option_title?: string;
   display_type?: "buttons" | "dropdown" | "colors" | "images";
   is_selected?: boolean;
+  is_primary_option?: boolean;
 };
 
 const updateOptionConfigStep = createStep(
@@ -22,6 +23,7 @@ const updateOptionConfigStep = createStep(
     if (input.option_title) updatePayload.option_title = input.option_title;
     if (input.display_type) updatePayload.display_type = input.display_type;
     if (input.is_selected) updatePayload.is_selected = input.is_selected;
+    if (input.is_primary_option) updatePayload.is_primary_option = input.is_primary_option;
 
     const newOptionConfig = await optionConfigModuleService.updateOptionConfigs({
       id: input.id,
@@ -40,6 +42,7 @@ const updateOptionConfigStep = createStep(
       option_title: optionConfig.option_title,
       display_type: optionConfig.display_type,
       is_selected: optionConfig.is_selected,
+      is_primary_option: optionConfig.is_primary_option,
     });
   }
 );

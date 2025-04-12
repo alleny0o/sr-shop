@@ -23,6 +23,7 @@ export type OptionConfig = {
     option_id: string;
     option_title: string;
     is_selected: boolean;
+    is_primary_option: boolean;
     display_type: "buttons" | "dropdown" | "colors" | "images";
     option_values: OptionValue[];
 };

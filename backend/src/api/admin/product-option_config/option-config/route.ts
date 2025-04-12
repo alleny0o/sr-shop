@@ -8,13 +8,14 @@ import { updateOptionConfigSchema } from "../../../validation-schemas";
 type PutRequestBody = z.infer<typeof updateOptionConfigSchema>;
 
 export const PUT = async (req: AuthenticatedMedusaRequest<PutRequestBody>, res: MedusaResponse) => {
-  const { id, option_title, display_type, is_selected } = req.body;
+  const { id, option_title, display_type, is_selected, is_primary_option } = req.body;
   const result = await updateOptionConfigWorkflow(req.scope).run({
     input: {
       id,
       option_title,
       display_type,
       is_selected,
+      is_primary_option,
     },
   });
 
