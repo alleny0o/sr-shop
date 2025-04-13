@@ -16,7 +16,6 @@ import {
 import { getRegion } from "./regions"
 
 import { getEnrichedVariantData } from "./variants"
-import { EnrichedVariant } from "types/global"
 
 /**
  * Retrieves a cart and enriches its items with availability status and variant data
