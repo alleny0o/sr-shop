@@ -19,22 +19,34 @@ import { getEnrichedVariantData } from "./variants"
 import { EnrichedVariant } from "types/global"
 
 /**
- * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
- * @param cartId - optional - The ID of the cart to retrieve.
- * @returns The cart object if found, or null if not found.
+ * Retrieves a cart and enriches its items with availability status and variant data
+ *
+ * @param cartId - Optional cart ID to retrieve (uses stored ID if not provided)
+ * @returns The enriched cart object or null if not found
+ *
+ * Flow:
+ * 1. Get cart ID and fetch cart
+ * 2. Process cart items to group variants by product
+ * 3. Fetch enriched data for all variants
+ * 4. Apply enriched data to cart items
+ * 5. Return the enhanced cart
  */
 export async function retrieveCart(cartId?: string) {
+  const isNotNull = <T>(v: T | null): v is T => v !== null
+
+  // Step 1a: Get cart ID (from argument or stored session/local)
   const id = cartId || (await getCartId())
   if (!id) return null
 
+  // Step 1b: Prepare request headers and cache options
   const headers = {
     ...(await getAuthHeaders()),
   }
-
   const next = {
     ...(await getCacheOptions("carts")),
   }
 
+  // Step 1c: Fetch cart from Medusa Store API
   const response = await sdk.client
     .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
       method: "GET",
@@ -53,7 +65,7 @@ export async function retrieveCart(cartId?: string) {
   const cart = response.cart
   if (!cart.items || cart.items.length === 0) return cart
 
-  // Group variant_ids by product_id
+  // Step 2: Group variant_ids by product_id for efficient lookup
   const productVariantsMap: Record<string, string[]> = {}
   for (const item of cart.items) {
     if (!item.product_id || !item.variant_id) continue
@@ -63,35 +75,47 @@ export async function retrieveCart(cartId?: string) {
     productVariantsMap[item.product_id].push(item.variant_id)
   }
 
-  // Fetch enriched data: inventory, options, medias
+  // Step 3a: Fetch enriched data (inventory, options, media, availability) for each product
   const enrichedData = await Promise.all(
     Object.entries(productVariantsMap).map(([product_id, variant_ids]) =>
       getEnrichedVariantData(product_id, variant_ids)
     )
   )
 
-  const flatEnriched = enrichedData.flat()
+  // Step 3b: Flatten and filter out null enrichments
+  const flatEnriched = enrichedData.filter(isNotNull).flat()
+
+  // Step 3c: Create a lookup map of variant_id to enriched data
   const enrichedMap = Object.fromEntries(
     flatEnriched.map((v) => [v.variant_id, v])
   )
 
-  // Inject into cart items
+  // Step 4: Apply enriched data to cart items and handle missing product/variant cases
   for (const item of cart.items) {
-    const variantId = item.variant?.id
+    const variantId = item.variant_id
     if (!variantId) continue
-    if (!item.variant || !item.variant.id) continue
-
+    
     const enriched = enrichedMap[variantId]
-    if (!enriched) continue
+    if (!enriched) continue // Skip if no enriched data found
 
-    const variant = item.variant as EnrichedVariant
-
-    variant.inventory_quantity = enriched.inventory_quantity
-    variant.options = enriched.options
-    variant.medias = enriched.medias
+    // Only enrich existing variant objects to avoid TypeScript errors
+    if (item.variant) {
+      // Use type assertion to add our properties
+      const variant = item.variant as any;
+      
+      // Add enriched data
+      variant.inventory_quantity = enriched.inventory_quantity;
+      variant.options = enriched.options;
+      variant.medias = enriched.medias;
+      variant.availability_status = enriched.availability_status;
+    } else {
+      // Add a simple flag to indicate item has a discontinued variant
+      // instead of trying to create a full variant object
+      (item as any).has_discontinued_variant = true;
+    }
   }
 
-  console.log(JSON.stringify(cart, null, 2))
+  // Step 5: Return the enhanced cart
   return cart
 }
 
@@ -170,6 +194,7 @@ export async function addToCart({
   }
 
   const cart = await getOrSetCart(countryCode)
+  // console.log(JSON.stringify(cart, null, 2))
 
   if (!cart) {
     throw new Error("Error retrieving or creating cart")

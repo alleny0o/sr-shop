@@ -73,10 +73,32 @@ export const listProducts = async ({
     cache: "force-cache",
   });
 
-  // console.log(JSON.stringify(products, null, 2));
+  // Early return if no products were found
+  if (!products.length) {
+    return {
+      response: { 
+        products: [], 
+        count: 0,
+      },
+      nextPage: null,
+      queryParams,
+    }
+  }
 
   const productIds = products.map((p) => p.id);
   const variantIds = products.flatMap((p) => p.variants?.map((v) => v.id) || []);
+
+  // Skip additional API calls if we don't have any product IDs or variant IDs
+  if (productIds.length === 0 && variantIds.length === 0) {
+    return {
+      response: {
+        products,
+        count,
+      },
+      nextPage: count > offset + limit ? pageParam + 1 : null,
+      queryParams,
+    }
+  }
 
   const productIdParams = new URLSearchParams();
   productIds.forEach((id) => productIdParams.append("ids[]", id));
@@ -84,35 +106,64 @@ export const listProducts = async ({
   const variantIdParams = new URLSearchParams();
   variantIds.forEach((id) => variantIdParams.append("ids[]", id));
 
-  const variantMediasEndpoint = trimmed
-  ? `/store/variant_medias/trimmed?${variantIdParams.toString()}`
-  : `/store/variant_medias?${variantIdParams.toString()}`;
+  // Define types for our API responses
+  type ProductFormsResponse = { 
+    product_forms: { product_id: string; product_form: ProductForm | null }[] 
+  };
+  
+  type VariantMediasResponse = { 
+    variant_medias: { variant_id: string; variant_medias: VariantMedia[] | null }[] 
+  };
+  
+  type MediaTagsResponse = { 
+    media_tags: { variant_id: string; media_tag: MediaTag | null }[] 
+  };
 
-  const [
-    { product_forms },
-    { variant_medias },
-    { media_tags },
-  ] = await Promise.all([
-    sdk.client.fetch<{ product_forms: { product_id: string; product_form: ProductForm | null }[] }>(
+  // Default empty responses
+  let productFormsResponse: ProductFormsResponse = { product_forms: [] };
+  let variantMediasResponse: VariantMediasResponse = { variant_medias: [] };
+  let mediaTagsResponse: MediaTagsResponse = { media_tags: [] };
+
+  // Perform the API calls based on conditions
+  if (productIds.length > 0) {
+    productFormsResponse = await sdk.client.fetch<ProductFormsResponse>(
       `/store/product_form?${productIdParams.toString()}`,
       { method: "GET", next, cache: "force-cache" }
-    ),
-    sdk.client.fetch<{ variant_medias: { variant_id: string; variant_medias: VariantMedia[] | null }[] }>(
-      variantMediasEndpoint,
-      { method: "GET", next, cache: "force-cache" }
-    ),
-    sdk.client.fetch<{ media_tags: { variant_id: string; media_tag: MediaTag | null }[] }>(
-      `/store/media_tag?${variantIdParams.toString()}`,
-      { method: "GET", next, cache: "force-cache" }
-    ),
-  ]);
+    );
+  }
 
-  const res = await sdk.client.fetch<{ option_configs: OptionConfig[] | null }>(
-    `/store/option_configs?${productIdParams.toString()}`,
-    { method: "GET", next, cache: "force-cache" }
-  );
+  if (variantIds.length > 0) {
+    const variantMediasEndpoint = trimmed
+      ? `/store/variant_medias/trimmed?${variantIdParams.toString()}`
+      : `/store/variant_medias?${variantIdParams.toString()}`;
+      
+    // Execute these fetches in parallel if we have variant IDs
+    [variantMediasResponse, mediaTagsResponse] = await Promise.all([
+      sdk.client.fetch<VariantMediasResponse>(
+        variantMediasEndpoint,
+        { method: "GET", next, cache: "force-cache" }
+      ),
+      sdk.client.fetch<MediaTagsResponse>(
+        `/store/media_tag?${variantIdParams.toString()}`,
+        { method: "GET", next, cache: "force-cache" }
+      )
+    ]);
+  }
 
-  const option_configs = res.option_configs || [];
+  // Extract the data we need
+  const { product_forms } = productFormsResponse;
+  const { variant_medias } = variantMediasResponse;
+  const { media_tags } = mediaTagsResponse;
+
+  // Only fetch option configs if we have product IDs
+  let option_configs: OptionConfig[] = [];
+  if (productIds.length > 0) {
+    const res = await sdk.client.fetch<{ option_configs: OptionConfig[] | null }>(
+      `/store/option_configs?${productIdParams.toString()}`,
+      { method: "GET", next, cache: "force-cache" }
+    );
+    option_configs = res.option_configs || [];
+  }
 
   // Create maps for faster lookup
   const productFormMap = new Map(product_forms.map(({ product_id, product_form }) => [product_id, product_form]));

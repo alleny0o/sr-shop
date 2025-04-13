@@ -93,6 +93,7 @@ export type OptionConfigValueImage = {
 export type EnrichedVariant = HttpTypes.StoreProductVariant & {
   medias?: VariantMedia[] | null;
   media_tag?: MediaTag | null;
+  availability_status?: "discontinued" | "available" | "out_of_stock";
 };
 
 export type EnrichedOption = Omit<HttpTypes.StoreProductOption, 'values'> & {
@@ -109,4 +110,8 @@ export type EnrichedProduct = Omit<HttpTypes.StoreProduct, 'variants' | 'options
   product_form?: ProductForm | null;
   variants: EnrichedVariant[] | null; 
   options: EnrichedOption[] | null;
+};
+
+export type StoreCartLineItemWithUnavailable = HttpTypes.StoreCartLineItem & {
+  _unavailable?: boolean
 };

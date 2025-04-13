@@ -10,7 +10,8 @@ type ItemsTemplateProps = {
 }
 
 const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
-  const items = cart?.items
+  const items = cart?.items 
+
   return (
     <div>
       <div className="pb-3 flex items-center">
