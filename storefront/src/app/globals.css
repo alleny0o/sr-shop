@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-sans: var(--font-lexend);
+  --font-display: var(--font-montserrat);
+  --font-heading: var(--font-barlow);
+
+  /* Color scheme - Pastel Greens */
+  --color-pastel: #B5D8B9;       /* Main pastel green */
+  --color-pastel-dark: #8DC193;  /* Darker pastel green for hover effects */
+  --color-pastel-light: #D6EBD9; /* Lighter pastel green for banners */
+  
+  /* Background */
+  --color-soft-beige: #F2EFE6;   /* Slightly lighter beige to complement pastel green */
+  
+  /* Additional accents */
+  --color-stone: #E2DED4;        /* Subtle accent */
+  --color-cream: #F9F6F0;        /* Alternative background */
+}

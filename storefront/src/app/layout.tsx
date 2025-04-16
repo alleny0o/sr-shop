@@ -1,27 +1,28 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Barlow, Montserrat, Lexend } from 'next/font/google';
 import "./globals.css";
 
 // Global cart state provider
 import { CartProvider } from "@/providers/cart";
 
-// Configure Geist Sans font
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Configure fonts - selected for minimalist laser works aesthetics
+const lexend = Lexend({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-lexend',
 });
 
-// Configure Geist Mono font
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-montserrat',
 });
 
-// Site metadata
-export const metadata: Metadata = {
-  title: "SR Laserworks",
-  description: "Custom laser works and services",
-};
+const barlow = Barlow({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-barlow',
+  weight: ['400', '500', '600', '700'],
+});
 
 // Root application layout
 export default function RootLayout({
@@ -31,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${lexend.variable} ${montserrat.variable} ${barlow.variable} antialiased`}>
         <CartProvider>{children}</CartProvider>
       </body>
     </html>
