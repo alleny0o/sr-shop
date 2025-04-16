@@ -13,7 +13,7 @@ import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/product/components/thumbnail"
 import { useState } from "react"
 import { EnrichedVariant } from "types/global"
-import { useProductOptionsStore } from "stores/useProductOptionsStore"
+import { useProductOptionsStore } from "providers/product-options"
 import { isEqual } from "lodash"
 import { useRouter, useParams } from "next/navigation"
 

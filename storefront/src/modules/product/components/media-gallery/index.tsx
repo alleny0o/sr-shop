@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import ImageSliderMobile from "./image-slider-mobile";
 import ImageViewerDesktop from "./image-viewer-desktop";
 import EmptyGallery from "./empty-gallery";
-import { useProductOptionsStore } from "stores/useProductOptionsStore";
+import { useProductOptionsStore } from "providers/product-options";
 import { getProductDisplayMedia } from "@lib/util/product-medias";
 import { EnrichedProduct } from "types/global";
 

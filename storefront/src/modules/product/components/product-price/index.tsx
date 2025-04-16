@@ -3,7 +3,7 @@
 import { clx } from "@medusajs/ui"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { EnrichedProduct } from "types/global"
-import { useProductOptionsStore } from "stores/useProductOptionsStore"
+import { useProductOptionsStore } from "providers/product-options"
 
 export default function ProductPrice({
   product,

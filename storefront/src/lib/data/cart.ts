@@ -115,6 +115,7 @@ export async function retrieveCart(cartId?: string) {
   }
 
   // Step 5: Return the enhanced cart
+  console.log(JSON.stringify(cart, null, 2))
   return cart
 }
 
@@ -193,7 +194,6 @@ export async function addToCart({
   }
 
   const cart = await getOrSetCart(countryCode)
-  // console.log(JSON.stringify(cart, null, 2))
 
   if (!cart) {
     throw new Error("Error retrieving or creating cart")

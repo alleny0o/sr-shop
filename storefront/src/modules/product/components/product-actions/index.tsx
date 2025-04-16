@@ -2,7 +2,7 @@
 
 import { addToCart } from "@lib/data/cart"
 import { useIntersection } from "@lib/hooks/use-in-view"
-import { useProductOptionsStore } from "stores/useProductOptionsStore"
+import { useProductOptionsStore } from "providers/product-options"
 import { HttpTypes } from "@medusajs/types"
 import { Button, Divider } from "@medusajs/ui"
 import OptionSelect from "@modules/product/components/product-actions/option-select"
