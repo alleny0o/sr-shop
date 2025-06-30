@@ -28,17 +28,26 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   currentUrl,
   nextUrl,
 }) => {
-  // revalidate when a mutation is performed e.g add to cart, login...
-  if (formMethod && formMethod !== 'GET') return true;
+  // Helper function to check if a string is a valid locale format
+  const isValidLocale = (segment: string) => {
+    return /^[a-z]{2}-[a-z]{2}$/i.test(segment);
+  };
 
-  // revalidate when manually revalidating via useRevalidator
+  // Extract potential locale from URLs
+  const currentFirstSegment = currentUrl.pathname.split('/')[1];
+  const nextFirstSegment = nextUrl.pathname.split('/')[1];
+
+  // Only treat as locales if they match the expected format
+  const currentLocale = isValidLocale(currentFirstSegment) ? currentFirstSegment : null;
+  const nextLocale = isValidLocale(nextFirstSegment) ? nextFirstSegment : null;
+
+  // Revalidate if locale changed (including going from locale to no locale or vice versa)
+  if (currentLocale !== nextLocale) return true;
+
+  // Rest of your logic...
+  if (formMethod && formMethod !== 'GET') return true;
   if (currentUrl.toString() === nextUrl.toString()) return true;
 
-  // Defaulting to no revalidation for root loader data to improve performance.
-  // When using this feature, you risk your UI getting out of sync with your server.
-  // Use with caution. If you are uncomfortable with this optimization, update the
-  // line below to `return defaultShouldRevalidate` instead.
-  // For more details see: https://remix.run/docs/en/main/route/should-revalidate
   return false;
 };
 
@@ -74,6 +83,13 @@ export async function loader(args: LoaderFunctionArgs) {
   const criticalData = await loadCriticalData(args);
 
   const {storefront, env} = args.context;
+
+  try {
+    // Step 1: Fetch localizations with caching
+    
+  } catch (error) {
+    
+  }
 
   return {
     ...deferredData,
