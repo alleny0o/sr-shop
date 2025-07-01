@@ -12,7 +12,6 @@
     "typecheck": "tsc --noEmit",
     "codegen": "shopify hydrogen codegen"
   },
-  "prettier": "@shopify/prettier-config",
   "dependencies": {
     "@shopify/hydrogen": "2025.5.0",
     "@shopify/remix-oxygen": "^3.0.0",

@@ -1,5 +1,5 @@
-import {Analytics, getShopAnalytics, useNonce} from '@shopify/hydrogen';
-import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import { Analytics, getShopAnalytics, useNonce } from '@shopify/hydrogen';
+import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
 import {
   Outlet,
   useRouteError,
@@ -10,24 +10,25 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteLoaderData,
+  redirect,
 } from 'react-router';
 import favicon from '~/assets/favicon.svg';
 import { HEADER_QUERY, FOOTER_QUERY } from './graphql/storefront/menus';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
-import {PageLayout} from './components/PageLayout';
+import { PageLayout } from './components/PageLayout';
+import { ALL_LOCALIZATION_QUERY } from './graphql/storefront/locale';
+import { resolveEffectiveLocale } from './lib/locale';
+import { CountryCode } from '@shopify/hydrogen/customer-account-api-types';
+import { LanguageCode } from '@shopify/hydrogen/storefront-api-types';
 
 export type RootLoader = typeof loader;
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
  */
-export const shouldRevalidate: ShouldRevalidateFunction = ({
-  formMethod,
-  currentUrl,
-  nextUrl,
-}) => {
+export const shouldRevalidate: ShouldRevalidateFunction = ({ formMethod, currentUrl, nextUrl }) => {
   // Helper function to check if a string is a valid locale format
   const isValidLocale = (segment: string) => {
     return /^[a-z]{2}-[a-z]{2}$/i.test(segment);
@@ -48,6 +49,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   if (formMethod && formMethod !== 'GET') return true;
   if (currentUrl.toString() === nextUrl.toString()) return true;
 
+  console.log('false');
   return false;
 };
 
@@ -71,51 +73,124 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    { rel: 'icon', type: 'image/svg+xml', href: favicon },
   ];
 }
 
 export async function loader(args: LoaderFunctionArgs) {
-  // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
-  const criticalData = await loadCriticalData(args);
-
-  const {storefront, env} = args.context;
-
   try {
     // Step 1: Fetch localizations with caching
-    
-  } catch (error) {
-    
-  }
+    const localizations = await args.context.storefront.query(ALL_LOCALIZATION_QUERY, {
+      cache: args.context.storefront.CacheLong(),
+    });
 
-  return {
-    ...deferredData,
-    ...criticalData,
-    publicStoreDomain: env.PUBLIC_STORE_DOMAIN,
-    shop: getShopAnalytics({
-      storefront,
-      publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
-    }),
-    consent: {
-      checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
-      storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
-      withPrivacyBanner: false,
-      // localize the privacy banner
-      country: args.context.storefront.i18n.country,
-      language: args.context.storefront.i18n.language,
-    },
-  };
+    // Step 2: Determine effective locale
+    const url = new URL(args.request.url);
+    const { locale, cookie } = resolveEffectiveLocale(args.request, localizations, url.pathname);
+
+    // Step 3: Check if redirect is needed
+    const currentPrefixMatch = url.pathname.match(/^\/([a-z]{2}-[a-z]{2})(\/|$)/i);
+    const currentPrefix = currentPrefixMatch?.[1]?.toLowerCase();
+
+    // Always redirect if we have a locale but no prefix in URL, or wrong prefix
+    const needsRedirect = locale?.prefix && (
+      !currentPrefix || // No prefix in URL (like localhost:3000)
+      currentPrefix !== locale.prefix.toLowerCase() // Wrong prefix in URL
+    );
+
+    if (needsRedirect) {
+      // Remove any existing locale prefix from pathname
+      const pathnameWithoutPrefix = currentPrefix 
+        ? url.pathname.replace(/^\/[a-z]{2}-[a-z]{2}/i, '') 
+        : url.pathname;
+
+      // Ensure the path starts with /
+      const normalizedPath = pathnameWithoutPrefix.startsWith('/')
+        ? pathnameWithoutPrefix
+        : `/${pathnameWithoutPrefix}`;
+
+      // Build redirect URL with locale prefix
+      const redirectUrl = `/${locale.prefix}${normalizedPath}`.replace(/\/+$/, '') + url.search;
+
+      console.log('Redirecting:', url.pathname, '->', redirectUrl);
+      
+      throw redirect(redirectUrl, {
+        headers: cookie ? { 'Set-Cookie': cookie } : {},
+      });
+    }
+
+    // Step 4: Update context with resolved locale
+    if (locale?.country) args.context.storefront.i18n.country = locale.country;
+    if (locale?.language) args.context.storefront.i18n.language = locale.language;
+
+    // Step 5: Load other data in parallel
+    const [deferredData, criticalData] = await Promise.all([loadDeferredData(args), loadCriticalData(args)]);
+
+    // Step 6: Set cookie if needed
+    if (cookie) {
+      args.context.localeCookie = cookie;
+    }
+
+    return {
+      ...deferredData,
+      ...criticalData,
+      locale,
+      localizations,
+      publicStoreDomain: args.context.env.PUBLIC_STORE_DOMAIN,
+      shop: getShopAnalytics({
+        storefront: args.context.storefront,
+        publicStorefrontId: args.context.env.PUBLIC_STOREFRONT_ID,
+      }),
+      consent: {
+        checkoutDomain: args.context.env.PUBLIC_CHECKOUT_DOMAIN,
+        storefrontAccessToken: args.context.env.PUBLIC_STOREFRONT_API_TOKEN,
+        withPrivacyBanner: false,
+        country: locale?.country,
+        language: locale?.language,
+      },
+    };
+  } catch (error) {
+    // Check if this is a redirect response - if so, re-throw it
+    if (error instanceof Response && (error.status === 302 || error.status === 301)) {
+      throw error;
+    }
+
+    // Only fallback if it's not a redirect
+    console.error('Loader error:', error);
+    
+    const fallbackLocale = { country: 'US' as CountryCode, language: 'EN' as LanguageCode, prefix: 'en-us' };
+    args.context.storefront.i18n.country = fallbackLocale.country;
+    args.context.storefront.i18n.language = fallbackLocale.language;
+
+    const [deferredData, criticalData] = await Promise.all([loadDeferredData(args), loadCriticalData(args)]);
+
+    return {
+      ...deferredData,
+      ...criticalData,
+      locale: fallbackLocale,
+      localizations: null,
+      publicStoreDomain: args.context.env.PUBLIC_STORE_DOMAIN,
+      shop: getShopAnalytics({
+        storefront: args.context.storefront,
+        publicStorefrontId: args.context.env.PUBLIC_STOREFRONT_ID,
+      }),
+      consent: {
+        checkoutDomain: args.context.env.PUBLIC_CHECKOUT_DOMAIN,
+        storefrontAccessToken: args.context.env.PUBLIC_STOREFRONT_API_TOKEN,
+        withPrivacyBanner: false,
+        country: fallbackLocale.country,
+        language: fallbackLocale.language,
+      },
+    };
+  }
 }
 
 /**
  * Load data necessary for rendering content above the fold. This is the critical data
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
-async function loadCriticalData({context}: LoaderFunctionArgs) {
-  const {storefront} = context;
+async function loadCriticalData({ context }: LoaderFunctionArgs) {
+  const { storefront } = context;
 
   const [header] = await Promise.all([
     storefront.query(HEADER_QUERY, {
@@ -127,7 +202,7 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
     // Add other queries here, so that they are loaded in parallel
   ]);
 
-  return {header};
+  return { header };
 }
 
 /**
@@ -135,8 +210,8 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
  * fetched after the initial page load. If it's unavailable, the page should still 200.
  * Make sure to not throw any errors here, as it will cause the page to 500.
  */
-function loadDeferredData({context}: LoaderFunctionArgs) {
-  const {storefront, customerAccount, cart} = context;
+function loadDeferredData({ context }: LoaderFunctionArgs) {
+  const { storefront, customerAccount, cart } = context;
 
   // defer the footer query (below the fold)
   const footer = storefront
@@ -146,7 +221,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
         footerMenuHandle: 'footer', // Adjust to your footer menu handle
       },
     })
-    .catch((error) => {
+    .catch(error => {
       // Log query errors, but don't throw them so the page can still render
       console.error(error);
       return null;
@@ -158,7 +233,7 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
   };
 }
 
-export function Layout({children}: {children?: React.ReactNode}) {
+export function Layout({ children }: { children?: React.ReactNode }) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
 
@@ -175,11 +250,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
       </head>
       <body>
         {data ? (
-          <Analytics.Provider
-            cart={data.cart}
-            shop={data.shop}
-            consent={data.consent}
-          >
+          <Analytics.Provider cart={data.cart} shop={data.shop} consent={data.consent}>
             <PageLayout {...data}>{children}</PageLayout>
           </Analytics.Provider>
         ) : (
