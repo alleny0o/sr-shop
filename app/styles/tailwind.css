@@ -1,6 +1,48 @@
-/**
- * Configure Tailwind v4 in this file using CSS variables and directives:
- * https://tailwindcss.com/docs/v4-beta#css-first-configuration
- */
-
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Merriweather';
+  src: url('/fonts/merriweather/Merriweather-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Merriweather';
+  src: url('/fonts/merriweather/Merriweather-Italic-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@theme {
+  /* fonts */
+  --font-inter: 'Inter', sans-serif;
+  --font-merriweather: 'Merriweather', serif;
+
+  /* colors */
+  --color-pastel-green-light: #f3faf7;   /* very light pastel green - 60% usage */
+  --color-pastel-green-medium: #AFCFB8;  /* medium pastel green - 30% usage */
+  --color-pastel-green-dark: #92bda2;    /* darker pastel green - 10% usage */
+
+  --color-pastel-yellow-light: #FEFCF5;  /* very light pastel yellow - 60% usage */
+  --color-pastel-yellow-medium: #FDFBEF; /* medium pastel yellow - 30% usage */
+  --color-pastel-yellow-dark: #F9F5E7;   /* darker pastel yellow - 10% usage */
+}
