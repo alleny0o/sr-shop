@@ -2,26 +2,14 @@ import { useEffect, useState } from 'react';
 import { CTAButton } from '~/components/buttons/CTAButton';
 
 // Type definitions
-type Position = 'top-left' | 'top-center' | 'top-right' | 'middle-left' | 'middle-center' | 'middle-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
-type FontFamily = 'merriweather' | 'inter';
+type FontFamily = 'source-serif-4' | 'inter';
 type FontWeight = 'light' | 'normal' | 'medium' | 'semibold' | 'bold' | 'extrabold';
 type LetterSpacing = 'tighter' | 'tight' | 'normal' | 'wide' | 'wider' | 'widest';
 
 interface DeviceSettings {
-  position: Position;
   headingSize: number;
   subheadingSize: number;
   buttonSize: number;
-  maxWidth: number;
-  paddingY: number; // rem
-  peekHeight?: number; // pixels
-  maxHeight: number; // pixels
-}
-
-interface OverlaySettings {
-  enabled: boolean;
-  color: string;
-  opacity: number;
 }
 
 interface HeroConfig {
@@ -30,329 +18,171 @@ interface HeroConfig {
   ctaText: string;
   ctaUrl: string;
   backgroundImage: string;
-  
-  // Color Settings
-  textColor: string;
-  buttonBackgroundColor: string;
-  buttonTextColor: string;
-  
+
+
   // Typography Settings
   headingFont: FontFamily;
   headingWeight: FontWeight;
   headingTracking: LetterSpacing;
-  
+
   subheadingFont: FontFamily;
   subheadingWeight: FontWeight;
   subheadingTracking: LetterSpacing;
-  
+
   buttonFont: FontFamily;
   buttonWeight: FontWeight;
   buttonTracking: LetterSpacing;
-  
+
   desktop: DeviceSettings;
+  tablet: DeviceSettings;
   mobile: DeviceSettings;
-  desktopOverlay: OverlaySettings;
-  mobileOverlay: OverlaySettings;
 }
 
 // Hero configuration object - will be replaced by Sanity CMS data later
 const heroConfig: HeroConfig = {
-  heading: "Your Vision, Engraved Forever",
-  subheading: "Precision Laser Solutions for Your Custom Projects",
-  ctaText: "Explore Our Work",
-  ctaUrl: "/collections",
-  backgroundImage: "/media/coaster.jpg",
-  
-  // Color Settings
-  textColor: "#ffffff",
-  buttonBackgroundColor: "#ffffff",
-  buttonTextColor: "#000000",
-  
+  heading: 'Your Vision, Engraved Forever',
+  subheading: "Handcrafted keepsakes that capture life's moments.",
+  ctaText: 'Create Your Keepsake',
+  ctaUrl: '/collections',
+  backgroundImage: '/media/coaster.jpg',
+
   // Typography Settings
   headingFont: 'inter',
-  headingWeight: 'bold',
-  headingTracking: 'tight',
-  
-  subheadingFont: 'inter',
-  subheadingWeight: 'normal',
+  headingWeight: 'medium',
+  headingTracking: 'normal',
+
+  subheadingFont: 'source-serif-4',
+  subheadingWeight: 'light',
   subheadingTracking: 'normal',
-  
+
   buttonFont: 'inter',
-  buttonWeight: 'medium',
+  buttonWeight: 'light',
   buttonTracking: 'normal',
-  
+
   desktop: {
-    position: 'bottom-left',
-    headingSize: 2.5,
-    subheadingSize: 1.25,
-    buttonSize: 1,
-    maxWidth: 48,
-    paddingY: 2, // rem
-    peekHeight: 0, // pixels - set to 0 for no peek
-    maxHeight: 800, // pixels
+    headingSize: 2,
+    subheadingSize: 1,
+    buttonSize: 0.9,
   },
-  
+
+  tablet: {
+    headingSize: 2,
+    subheadingSize: 1,
+    buttonSize: 0.9,
+  },
+
   mobile: {
-    position: 'bottom-left',
     headingSize: 1.5,
-    subheadingSize: 0.9,
-    buttonSize: 0.8,
-    maxWidth: 60,
-    paddingY: 1.5, // rem
-    peekHeight: 0, // pixels - set to 0 for no peek
-    maxHeight: 600, // pixels
-  },
-  
-  desktopOverlay: {
-    enabled: true,
-    color: '#000000',
-    opacity: 0.4,
-  },
-  
-  mobileOverlay: {
-    enabled: true,
-    color: '#000000',
-    opacity: 0.5,
+    subheadingSize: 0.8,
+    buttonSize: 0.7,
   },
 };
 
 export const HomeHero = () => {
-  const [heroHeight, setHeroHeight] = useState('100vh');
+  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
   useEffect(() => {
-    const calculateHeight = () => {
-      const announcement = document.getElementById('announcement-bar');
-      const header = document.getElementById('header');
-      const totalHeight = (announcement?.offsetHeight || 0) + (header?.offsetHeight || 0);
-      
-      // Add peek height based on device
-      const isMobile = window.innerWidth < 768;
-      const peekHeight = isMobile ? heroConfig.mobile.peekHeight || 0 : heroConfig.desktop.peekHeight || 0;
-      
-      setHeroHeight(`calc(100vh - ${totalHeight + peekHeight}px)`);
+    const updateScreenSize = () => {
+      const width = window.innerWidth;
+      if (width < 768) {
+        setScreenSize('mobile');
+      } else if (width < 1024) {
+        setScreenSize('tablet');
+      } else {
+        setScreenSize('desktop');
+      }
     };
 
-    calculateHeight();
-    window.addEventListener('resize', calculateHeight);
-    
-    return () => window.removeEventListener('resize', calculateHeight);
+    updateScreenSize();
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
   }, []);
 
-  const getPositionClasses = (position: Position): { container: string; text: string; button: string } => {
-    const positions: Record<Position, { container: string; text: string; button: string }> = {
-      'top-left': { 
-        container: 'justify-start items-start', 
-        text: 'text-left', 
-        button: 'flex justify-start' 
-      },
-      'top-center': { 
-        container: 'justify-center items-start', 
-        text: 'text-center', 
-        button: 'flex justify-center' 
-      },
-      'top-right': { 
-        container: 'justify-end items-start', 
-        text: 'text-right', 
-        button: 'flex justify-end' 
-      },
-      'middle-left': { 
-        container: 'justify-start items-center', 
-        text: 'text-left', 
-        button: 'flex justify-start' 
-      },
-      'middle-center': { 
-        container: 'justify-center items-center', 
-        text: 'text-center', 
-        button: 'flex justify-center' 
-      },
-      'middle-right': { 
-        container: 'justify-end items-center', 
-        text: 'text-right', 
-        button: 'flex justify-end' 
-      },
-      'bottom-left': { 
-        container: 'justify-start items-end', 
-        text: 'text-left', 
-        button: 'flex justify-start' 
-      },
-      'bottom-center': { 
-        container: 'justify-center items-end', 
-        text: 'text-center', 
-        button: 'flex justify-center' 
-      },
-      'bottom-right': { 
-        container: 'justify-end items-end', 
-        text: 'text-right', 
-        button: 'flex justify-end' 
-      },
-    };
-    return positions[position];
-  };
+  const settings = heroConfig[screenSize];
 
   const getFontClass = (font: FontFamily): string => {
-    return font === 'merriweather' ? 'font-merriweather' : 'font-inter';
+    return font === 'source-serif-4' ? 'font-source-serif-4' : 'font-inter';
   };
 
   const getWeightClass = (weight: FontWeight): string => {
     const weights: Record<FontWeight, string> = {
-      'light': 'font-light',
-      'normal': 'font-normal',
-      'medium': 'font-medium',
-      'semibold': 'font-semibold',
-      'bold': 'font-bold',
-      'extrabold': 'font-extrabold',
+      light: 'font-light',
+      normal: 'font-normal',
+      medium: 'font-medium',
+      semibold: 'font-semibold',
+      bold: 'font-bold',
+      extrabold: 'font-extrabold',
     };
     return weights[weight];
   };
 
   const getTrackingClass = (tracking: LetterSpacing): string => {
     const trackings: Record<LetterSpacing, string> = {
-      'tighter': 'tracking-tighter',
-      'tight': 'tracking-tight',
-      'normal': 'tracking-normal',
-      'wide': 'tracking-wide',
-      'wider': 'tracking-wider',
-      'widest': 'tracking-widest',
+      tighter: 'tracking-tighter',
+      tight: 'tracking-tight',
+      normal: 'tracking-normal',
+      wide: 'tracking-wide',
+      wider: 'tracking-wider',
+      widest: 'tracking-widest',
     };
     return trackings[tracking];
+  };
+
+  // Convert font family from HomeHero types to CTAButton types
+  const getButtonFont = (font: FontFamily): 'merriweather' | 'inter' => {
+    return font === 'source-serif-4' ? 'merriweather' : 'inter';
   };
 
   return (
     <section
       id="home-hero"
       aria-label="Welcome to SR LaserWorks"
-      className="relative w-full max-w-10xl mx-auto overflow-hidden"
-      style={{ 
-        height: heroHeight,
-        maxHeight: window.innerWidth < 768 ? `${heroConfig.mobile.maxHeight}px` : `${heroConfig.desktop.maxHeight}px`
-      }}
+      className="lg:max-h-[595px] max-h-[700px] flex relative w-full max-w-10xl mx-auto overflow-hidden"
     >
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src={heroConfig.backgroundImage}
-          alt="Hero Background"
-          className="w-full h-full object-cover"
-          loading="eager"
-          fetchPriority="high"
-        />
-      </div>
-
-      {/* Desktop Overlay */}
-      {heroConfig.desktopOverlay.enabled && (
-        <div 
-          className="hidden md:block absolute inset-0"
-          style={{
-            backgroundColor: heroConfig.desktopOverlay.color,
-            opacity: heroConfig.desktopOverlay.opacity,
-          }}
-        />
-      )}
-
-      {/* Mobile Overlay */}
-      {heroConfig.mobileOverlay.enabled && (
-        <div 
-          className="block md:hidden absolute inset-0"
-          style={{
-            backgroundColor: heroConfig.mobileOverlay.color,
-            opacity: heroConfig.mobileOverlay.opacity,
-          }}
-        />
-      )}
-
-      {/* Content Container - Desktop */}
-      <div 
-        className={`hidden md:flex relative z-10 w-full h-full px-4 sm:px-6 lg:px-8 ${getPositionClasses(heroConfig.desktop.position).container}`}
-        style={{ paddingTop: `${heroConfig.desktop.paddingY}rem`, paddingBottom: `${heroConfig.desktop.paddingY}rem` }}
-      >
-        <div 
-          className={`flex flex-col ${getPositionClasses(heroConfig.desktop.position).text}`}
-          style={{ maxWidth: `${heroConfig.desktop.maxWidth}rem` }}
-        >
-          {/* Main Heading - Desktop */}
-          <h1 
-            className={`${getFontClass(heroConfig.headingFont)} ${getWeightClass(heroConfig.headingWeight)} ${getTrackingClass(heroConfig.headingTracking)} mb-6 leading-tight`}
-            style={{ 
-              fontSize: `${heroConfig.desktop.headingSize}rem`,
-              color: heroConfig.textColor
-            }}
-          >
-            {heroConfig.heading}
-          </h1>
-          
-          {/* Subheading - Desktop */}
-          <p 
-            className={`${getFontClass(heroConfig.subheadingFont)} ${getWeightClass(heroConfig.subheadingWeight)} ${getTrackingClass(heroConfig.subheadingTracking)} mb-8 leading-relaxed`}
-            style={{ 
-              fontSize: `${heroConfig.desktop.subheadingSize}rem`,
-              color: heroConfig.textColor
-            }}
-          >
-            {heroConfig.subheading}
-          </p>
-          
-          {/* CTA Button - Desktop */}
-          <div className={`${getPositionClasses(heroConfig.desktop.position).button} mt-4`}>
-            <CTAButton
-              to={heroConfig.ctaUrl}
-              font={heroConfig.buttonFont}
-              weight={heroConfig.buttonWeight}
-              tracking={heroConfig.buttonTracking}
-              size={heroConfig.desktop.buttonSize}
-              backgroundColor={heroConfig.buttonBackgroundColor}
-              textColor={heroConfig.buttonTextColor}
-            >
-              {heroConfig.ctaText}
-            </CTAButton>
-          </div>
+      <div className="lg:max-h-[595px] max-h-[700px] flex flex-col lg:flex-row-reverse">
+        {/* Image Container - Right side on desktop, top on mobile */}
+        <div className="grow-0 relative z-base max-h-[375px] md:max-h-[450px] lg:max-h-none basis-3/5">
+          <img
+            src={heroConfig.backgroundImage}
+            alt="Featured laser engraving work"
+            className="w-full h-full object-cover !rounded-none"
+            loading="eager"
+          />
         </div>
-      </div>
 
-      {/* Content Container - Mobile */}
-      <div 
-        className={`flex md:hidden relative z-10 w-full h-full px-4 ${getPositionClasses(heroConfig.mobile.position).container}`}
-        style={{ paddingTop: `${heroConfig.mobile.paddingY}rem`, paddingBottom: `${heroConfig.mobile.paddingY}rem` }}
-      >
-        <div 
-          className={`flex flex-col ${getPositionClasses(heroConfig.mobile.position).text}`}
-          style={{ maxWidth: `${heroConfig.mobile.maxWidth}rem` }}
+        {/* Content Container - Left side on desktop, bottom on mobile */}
+        <div
+          className="bg-pastel-green-medium flex flex-col h-auto w-full items-start justify-center basis-2/5 py-10 lg:py-12 px-4 sm:px-6 lg:px-8 pointer-events-none"
         >
-          {/* Main Heading - Mobile */}
-          <h1 
-            className={`${getFontClass(heroConfig.headingFont)} ${getWeightClass(heroConfig.headingWeight)} ${getTrackingClass(heroConfig.headingTracking)} mb-4 leading-tight`}
-            style={{ 
-              fontSize: `${heroConfig.mobile.headingSize}rem`,
-              color: heroConfig.textColor
-            }}
-          >
-            {heroConfig.heading}
-          </h1>
-          
-          {/* Subheading - Mobile */}
-          <p 
-            className={`${getFontClass(heroConfig.subheadingFont)} ${getWeightClass(heroConfig.subheadingWeight)} ${getTrackingClass(heroConfig.subheadingTracking)} mb-6 leading-relaxed`}
-            style={{ 
-              fontSize: `${heroConfig.mobile.subheadingSize}rem`,
-              color: `${heroConfig.textColor}E6` // 90% opacity
-            }}
-          >
-            {heroConfig.subheading}
-          </p>
-          
-          {/* CTA Button - Mobile */}
-          <div className={`${getPositionClasses(heroConfig.mobile.position).button} mt-4`}>
-            <CTAButton
-              to={heroConfig.ctaUrl}
-              font={heroConfig.buttonFont}
-              weight={heroConfig.buttonWeight}
-              tracking={heroConfig.buttonTracking}
-              size={heroConfig.mobile.buttonSize}
-              backgroundColor={heroConfig.buttonBackgroundColor}
-              textColor={heroConfig.buttonTextColor}
-              className="px-6" // Mobile-specific padding override
+          <div className="space-y-6 w-full">
+            {/* Heading */}
+            <h1
+              className={`${getFontClass(heroConfig.headingFont)} ${getWeightClass(heroConfig.headingWeight)} ${getTrackingClass(heroConfig.headingTracking)} leading-tight`}
+              style={{ fontSize: `${settings.headingSize}rem` }}
             >
-              {heroConfig.ctaText}
-            </CTAButton>
+              {heroConfig.heading}
+            </h1>
+
+            {/* Subheading */}
+            <p
+              className={`${getFontClass(heroConfig.subheadingFont)} ${getWeightClass(heroConfig.subheadingWeight)} ${getTrackingClass(heroConfig.subheadingTracking)} leading-relaxed`}
+              style={{ fontSize: `${settings.subheadingSize}rem` }}
+            >
+              {heroConfig.subheading}
+            </p>
+
+            {/* CTA Button */}
+            <div className="pt-4 !pointer-events-auto">
+              <CTAButton
+                to={heroConfig.ctaUrl}
+                font={getButtonFont(heroConfig.buttonFont)}
+                weight={heroConfig.buttonWeight}
+                tracking={heroConfig.buttonTracking}
+                size={settings.buttonSize}
+              >
+                {heroConfig.ctaText}
+              </CTAButton>
+            </div>
           </div>
         </div>
       </div>

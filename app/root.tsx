@@ -248,7 +248,7 @@ export function Layout({ children }: { children?: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-pastel-yellow-light">
         {data ? (
           <Analytics.Provider cart={data.cart} shop={data.shop} consent={data.consent}>
             <PageLayout {...data}>{children}</PageLayout>

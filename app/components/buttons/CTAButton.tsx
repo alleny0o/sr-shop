@@ -26,9 +26,8 @@ export const CTAButton: React.FC<CTAButtonProps> = ({
   tracking = 'normal',
   size = 1.125,
   className = '',
-  variant = 'primary',
-  backgroundColor = '#10b981', // default green-500
-  textColor = '#ffffff',
+  backgroundColor = '#FEFCF5', // default pastel yellow
+  textColor = '#000000', // default black
 }) => {
   // Font family classes
   const getFontClass = (fontFamily: FontFamily): string => {
@@ -66,8 +65,7 @@ export const CTAButton: React.FC<CTAButtonProps> = ({
         ${getFontClass(font)} 
         ${getWeightClass(weight)}
         ${getTrackingClass(tracking)}
-        py-2 px-4 transition-opacity duration-200 inline-block
-        hover:opacity-90
+        py-2 px-4 inline-block cursor-pointer transition-colors duration-200 hover:!bg-pastel-yellow-dark
         ${className}
       `.trim()}
       style={{ 
