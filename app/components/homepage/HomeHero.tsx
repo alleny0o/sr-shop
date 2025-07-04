@@ -1,10 +1,6 @@
 import { useEffect, useState } from 'react';
+import { FontFamily, FontWeight, LetterSpacing } from '~/types/typography';
 import { CTAButton } from '~/components/buttons/CTAButton';
-
-// Type definitions
-type FontFamily = 'source-serif-4' | 'inter';
-type FontWeight = 'light' | 'normal' | 'medium' | 'semibold' | 'bold' | 'extrabold';
-type LetterSpacing = 'tighter' | 'tight' | 'normal' | 'wide' | 'wider' | 'widest';
 
 interface DeviceSettings {
   headingSize: number;

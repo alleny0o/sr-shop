@@ -1,4 +1,4 @@
-import {createHydrogenContext} from '@shopify/hydrogen';
+import { createCustomerAccountClient, createHydrogenContext } from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/graphql/storefront/fragments/cart';
 
@@ -23,7 +23,7 @@ export async function createAppLoadContext(
     caches.open('hydrogen'),
     AppSession.init(request, [env.SESSION_SECRET]),
   ]);
-
+  
   const hydrogenContext = createHydrogenContext({
     env,
     request,

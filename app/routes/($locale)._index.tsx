@@ -7,7 +7,7 @@ import type {
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
 import {ProductItem} from '~/components/ProductItem';
-import { HomeHero } from '~/components/hero/home/HomeHero';
+import { HomeHero } from '~/components/homepage/HomeHero';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];

@@ -13,6 +13,9 @@ export default defineConfig({
     reactRouter(),
     tsconfigPaths(),
   ],
+  server: {
+    allowedHosts: ['immune-harmless-skunk.ngrok-free.app'],
+  },
   build: {
     // Allow a strict Content-Security-Policy
     // withtout inlining assets as base64:
