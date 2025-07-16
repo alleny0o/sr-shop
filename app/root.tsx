@@ -17,7 +17,7 @@ import { HEADER_QUERY, FOOTER_QUERY } from './graphql/storefront/menus';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
-import { PageLayout } from './components/PageLayout';
+import { PageLayout } from '~/components/layout/PageLayout';
 import { ALL_LOCALIZATION_QUERY } from './graphql/storefront/locale';
 import { resolveEffectiveLocale } from './lib/locale';
 import { CountryCode } from '@shopify/hydrogen/customer-account-api-types';
@@ -49,7 +49,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({ formMethod, current
   if (formMethod && formMethod !== 'GET') return true;
   if (currentUrl.toString() === nextUrl.toString()) return true;
 
-  console.log('false');
   return false;
 };
 

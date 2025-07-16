@@ -21,6 +21,10 @@ export default async function handleRequest(
       // ngrok domain
       'wss://immune-harmless-skunk.ngrok-free.app:*',
     ],
+    mediaSrc: [
+      'https://*.myshopify.com',
+      'https://cdn.shopify.com',
+    ],
   });
 
   const body = await renderToReadableStream(
