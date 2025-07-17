@@ -1,21 +1,28 @@
 // graphql queries
-import { ProductQuery } from 'storefrontapi.generated';
+import { ProductQuery, ProductFragment } from 'storefrontapi.generated';
+
+// types
+import {type MappedProductOptions} from '@shopify/hydrogen';
 
 // components
-import { ProductPrice } from '~/components/product-page/product-details/components/ProductPrice';
+import { ProductTitle } from './components/ProductTitle';
+import { ProductPrice } from './components/ProductPrice';
+import { ProductForm } from './components/ProductForm';
 
 type ProductDetailsProps = {
   product: ProductQuery['product'];
-  selectedVariant: any;
+  productOptions: MappedProductOptions[];
+  selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
 };
 
-export const ProductDetails = ({ product, selectedVariant }: ProductDetailsProps) => {
+export const ProductDetails = ({ product, productOptions, selectedVariant }: ProductDetailsProps) => {
   if (!product) return null;
   return (
-    <div className="flex flex-col space-y-1">
-      <div>
-        <h1 className="font-inter text-3xl">{product.title}</h1>
-      </div>
+    <div className="flex flex-col space-y-3">
+      {/* Product Header */}
+      <ProductTitle title={product.title} />
+
+      {/* Product Price */}
       <ProductPrice price={selectedVariant?.price} compareAtPrice={selectedVariant?.compareAtPrice} />
     </div>
   );

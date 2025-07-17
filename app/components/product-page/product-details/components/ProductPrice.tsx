@@ -1,19 +1,26 @@
 import { Money } from '@shopify/hydrogen';
 import type { MoneyV2 } from '@shopify/hydrogen/storefront-api-types';
 
-export function ProductPrice({ price, compareAtPrice }: { price?: MoneyV2; compareAtPrice?: MoneyV2 | null }) {
+type ProductPriceProps = {
+  price?: MoneyV2;
+  compareAtPrice?: MoneyV2 | null;
+};
+
+export const ProductPrice = ({ price, compareAtPrice }: ProductPriceProps) => {
+  if (!price) return null;
+
+  const hasDiscount = compareAtPrice && price;
+
   return (
     <div className="font-inter">
-      {compareAtPrice && price ? (
-        <div className="flex gap-2 items-center">
-          <Money data={price} className="text-black" />
-          <Money data={compareAtPrice} className="text-gray-400 line-through text-sm font-light" />
+      {hasDiscount ? (
+        <div className="flex gap-3 items-center">
+          <Money data={price} className="text-base text-black font-light" />
+          <Money data={compareAtPrice} className="text-sm text-gray-400 line-through font-light" />
         </div>
-      ) : price ? (
-        <Money data={price} className="text-black font font-inter" />
       ) : (
-        <span>&nbsp;</span>
+        <Money data={price} className="text-base text-black font-light" />
       )}
     </div>
   );
-}
+};

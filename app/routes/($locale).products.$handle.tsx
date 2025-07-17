@@ -117,7 +117,7 @@ export default function Product() {
         </div>
         {/* Right Side - Details & CTA */}
         <div className="col-span-1 lg:col-span-3 px-4 sm:px-6">
-          <ProductDetails product={product} selectedVariant={selectedVariant} />
+          <ProductDetails product={product} productOptions={productOptions} selectedVariant={selectedVariant} />
         </div>
       </div>
       <Analytics.ProductView

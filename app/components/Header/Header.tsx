@@ -84,7 +84,7 @@ export function Header({ header, cart, isLoggedIn, publicStoreDomain }: HeaderPr
           </div>
         </div>
 
-        {showBorder && <div className="w-full bg-black h-px"></div>}
+        {showBorder && <div className="w-full bg-gray-300 h-px"></div>}
       </header>
     </>
   );

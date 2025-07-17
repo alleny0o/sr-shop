@@ -46,12 +46,15 @@
   --color-pastel-yellow-medium: #FDFBEF; /* medium pastel yellow - 30% usage */
   --color-pastel-yellow-dark: #F9F5E7;   /* darker pastel yellow - 10% usage */
 
-    /* extended max-width scale */
-    --max-width-8xl: 88rem;    /* 1408px */
-    --max-width-9xl: 96rem;    /* 1536px */
-    --max-width-10xl: 104rem;  /* 1664px */
-    --max-width-11xl: 112rem;  /* 1792px */
-    --max-width-12xl: 120rem;  /* 1920px */
-    --max-width-13xl: 128rem;  /* 2048px */
-    --max-width-14xl: 136rem;  /* 2176px */
+  /* text colors */
+  --color-pastel-green-text: #6b9c7a;
+
+  /* extended max-width scale */
+  --max-width-8xl: 88rem;    /* 1408px */
+  --max-width-9xl: 96rem;    /* 1536px */
+  --max-width-10xl: 104rem;  /* 1664px */
+  --max-width-11xl: 112rem;  /* 1792px */
+  --max-width-12xl: 120rem;  /* 1920px */
+  --max-width-13xl: 128rem;  /* 2048px */
+  --max-width-14xl: 136rem;  /* 2176px */
 }
