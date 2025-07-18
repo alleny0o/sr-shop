@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ProductQuery } from 'storefrontapi.generated';
+import { createPortal } from 'react-dom';
+import { ProductQuery, ProductVariantFragment } from 'storefrontapi.generated';
 import { ModalMediaRenderer } from '../media/ModalMediaRenderer';
 import { X } from 'lucide-react';
 import { useImagePan } from '../../hooks/useImagePan';
@@ -54,7 +55,8 @@ export const ProductMediaModal: React.FC<ProductMediaModalProps> = props => {
 
   if (!isOpen || !currentMedia) return null;
 
-  return (
+  // Portal the modal to document.body to escape sticky container
+  return createPortal(
     <div className="fixed inset-0 z-[1000] bg-pastel-yellow-light flex items-center justify-center">
       {/* Loading indicator */}
       {isLoading && (
@@ -128,6 +130,7 @@ export const ProductMediaModal: React.FC<ProductMediaModalProps> = props => {
           />
         </div>
       )}
-    </div>
+    </div>,
+    document.body // This is the magic! Portal it to body instead of staying in the component tree
   );
 };

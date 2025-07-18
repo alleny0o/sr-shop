@@ -1,5 +1,5 @@
 // react imports
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 
 // lucide imports
 import { AlertCircle, ImageOff, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -19,14 +19,12 @@ import { ProductMediaModal } from './components/modal/ProductMediaModal';
 // storefrontapi.generated imports
 import { ProductQuery } from 'storefrontapi.generated';
 
+// storefront-api-types
+import { ProductVariant } from '@shopify/hydrogen/storefront-api-types';
+
 type ProductMediaProps = {
   media: NonNullable<ProductQuery['product']>['media'];
-  selectedVariant?: {
-    selectedOptions: Array<{
-      name: string;
-      value: string;
-    }>;
-  };
+  selectedVariant?: ProductVariant;
   isLoading?: boolean;
   error?: string | null;
   productTitle?: string;
@@ -39,34 +37,40 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
   error = null,
   productTitle = '',
 }) => {
-  // Track individual media loading states - start empty, only add when actually loading
+  // Track individual media loading states
   const [loadingMedia, setLoadingMedia] = useState<Set<string>>(new Set());
 
-  // Get media to display - variant-specific or all media (memoized for performance)
+  // Get media to display - variant gallery first, then fallback to main media
   const mediaToShow = useMemo(() => {
-    if (!media?.edges) return [];
+    // Check if variant has gallery metafield with content
+    const variantGallery = selectedVariant?.metafields?.find(metafield => metafield?.key === 'variant_gallery');
 
-    const currentVariantValues = selectedVariant?.selectedOptions?.map(option => option.value) || [];
-    const variantMedia = media.edges.filter(({ node }) => {
-      const altText = node.alt || '';
-      if (!altText.startsWith('#')) return false;
-      const variantValue = altText.substring(1);
-      return currentVariantValues.includes(variantValue);
-    });
+    if (variantGallery?.references?.edges && variantGallery.references.edges.length > 0) {
+      // Use variant gallery media - format it to match the main media structure
+      const formattedVariantMedia = variantGallery.references.edges.map(edge => ({
+        node: edge.node as NonNullable<ProductQuery['product']>['media']['edges'][number]['node'],
+      }));
 
-    const result = variantMedia.length > 0 ? variantMedia : media.edges;
+      return formattedVariantMedia;
+    }
 
-    // Clear loading state when media changes (variant switching)
-    setLoadingMedia(new Set());
+    // Fallback to main product media
+    if (!media?.edges || media?.edges.length < 1) return [];
+    return media.edges;
+  }, [selectedVariant?.metafields, media?.edges]);
 
-    return result;
-  }, [media?.edges, selectedVariant?.selectedOptions]);
+  // Create a unique key for carousel remounting when media changes
+  const carouselKey = useMemo(() => {
+    const variantId = selectedVariant?.id || 'default';
+    const mediaIds = mediaToShow.map(({ node }) => node.id).join('-');
+    return `carousel-${variantId}-${mediaIds}`;
+  }, [selectedVariant?.id, mediaToShow]);
 
-  // 🎉 NEW SIMPLE SEPARATE CAROUSELS - No syncing, no conflicts!
+  // Carousels with auto-reset on media change
   const mobileCarousel = useCarousel({
     mediaCount: mediaToShow.length,
     autoReset: true,
-    scrollDebounceMs: 200, // Increased for better performance
+    scrollDebounceMs: 200,
   });
 
   const desktopCarousel = useCarousel({
@@ -79,7 +83,7 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
     enabled: true,
     scrollRef: mobileCarousel.scrollRef,
     mediaCount: mediaToShow.length,
-    threshold: 30, // Increased threshold for more deliberate swipes
+    threshold: 30,
   });
 
   const desktopDrag = useDragSupport({
@@ -96,11 +100,6 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
     handleMediaLoad: originalHandleMediaLoad,
   } = useMediaErrors(mediaToShow.length);
   const modalHook = useModal({ mediaCount: mediaToShow.length });
-
-  // Enhanced media load handler - only add to loading when actually starting to load
-  const handleMediaLoadStart = (nodeId: string) => {
-    setLoadingMedia(prev => new Set([...prev, nodeId]));
-  };
 
   const handleMediaLoad = (nodeId: string) => {
     setLoadingMedia(prev => {
@@ -121,7 +120,7 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
     handleMediaError(nodeId);
   };
 
-  // Handle keyboard navigation (simplified)
+  // Handle keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -166,8 +165,9 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
 
   return (
     <>
-      <div className="flex flex-row">
-        {/* 📱 MOBILE LAYOUT - Enhanced for Safari/iOS */}
+      {/* Use key to force remount when media changes */}
+      <div key={carouselKey} className="flex flex-row">
+        {/* 📱 MOBILE LAYOUT */}
         <div className="lg:hidden">
           <div className="relative">
             <div
@@ -176,16 +176,14 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
               style={{
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
-                WebkitOverflowScrolling: 'touch', // Smooth scrolling on iOS
+                WebkitOverflowScrolling: 'touch',
                 cursor: mobileDrag.isDragging ? 'grabbing' : 'grab',
-                touchAction: 'pan-x pinch-zoom', // Allow horizontal scroll and pinch zoom
-                // Safari specific fixes
+                touchAction: 'pan-x pinch-zoom',
                 WebkitUserSelect: 'none',
                 WebkitTouchCallout: 'none',
               }}
               role="region"
               aria-label="Product media carousel"
-              // Mouse events for enhanced desktop interaction in mobile view
               onMouseDown={mobileDrag.onMouseDown}
               onMouseMove={mobileDrag.onMouseMove}
               onMouseUp={mobileDrag.onMouseUp}
@@ -212,7 +210,6 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
                       loadingMedia.has(node.id) ? 'opacity-0' : 'opacity-100'
                     }`}
                     style={{
-                      // Ensure proper aspect ratio on all devices
                       aspectRatio: '1',
                       minHeight: '0',
                     }}
@@ -232,13 +229,13 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
             </div>
           </div>
 
-          {/* 🎉 Mobile Dot Indicator - Clean state */}
+          {/* Mobile Dot Indicator */}
           {mobileCarousel.hasMultipleItems && (
             <DotIndicator totalMedia={mediaToShow.length} currentIndex={mobileCarousel.currentIndex} />
           )}
         </div>
 
-        {/* 🖥️ DESKTOP LAYOUT - Enhanced for Safari */}
+        {/* 🖥️ DESKTOP LAYOUT */}
         <div className="hidden lg:flex gap-4 w-full">
           {/* Thumbnails */}
           {desktopCarousel.hasMultipleItems && (
@@ -319,10 +316,10 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
               }}
             >
               <div
-                className="flex transition-transform duration-500 ease-out h-full relative"
+                className="flex h-full relative transition-transform duration-500 ease-out"
                 style={{
                   transform: `translateX(-${desktopCarousel.currentIndex * 100}%)`,
-                  willChange: 'transform', // Optimize for animations
+                  willChange: 'transform',
                 }}
               >
                 {mediaToShow.map(({ node }, index) => (
@@ -352,6 +349,7 @@ export const ProductMedia: React.FC<ProductMediaProps> = ({
                   </div>
                 ))}
               </div>
+
               {/* Navigation Arrows */}
               {desktopCarousel.hasMultipleItems && (
                 <>

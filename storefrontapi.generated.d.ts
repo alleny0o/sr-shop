@@ -139,6 +139,29 @@ export type ProductVariantFragment = Pick<StorefrontAPI.ProductVariant, 'availab
   product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
   selectedOptions: Array<Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>>;
   unitPrice?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>>;
+  metafields: Array<
+    StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.Metafield, 'key' | 'value' | 'type'> & {
+        references?: StorefrontAPI.Maybe<{
+          edges: Array<{
+            node:
+              | ({ __typename: 'MediaImage' } & Pick<StorefrontAPI.MediaImage, 'id' | 'alt' | 'mediaContentType'> & {
+                    previewImage?: StorefrontAPI.Maybe<
+                      Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                    >;
+                    image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>>;
+                  })
+              | ({ __typename: 'Video' } & Pick<StorefrontAPI.Video, 'id' | 'alt' | 'mediaContentType'> & {
+                    previewImage?: StorefrontAPI.Maybe<
+                      Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                    >;
+                    sources: Array<Pick<StorefrontAPI.VideoSource, 'url' | 'mimeType' | 'format' | 'height' | 'width'>>;
+                  });
+          }>;
+        }>;
+      }
+    >
+  >;
 };
 
 export type ProductFragment = Pick<
@@ -155,10 +178,7 @@ export type ProductFragment = Pick<
   media: {
     edges: Array<{
       node:
-        | ({ __typename: 'ExternalVideo' } & Pick<
-            StorefrontAPI.ExternalVideo,
-            'id' | 'host' | 'originUrl' | 'embedUrl' | 'alt' | 'mediaContentType'
-          > & {
+        | ({ __typename: 'ExternalVideo' } & Pick<StorefrontAPI.ExternalVideo, 'id' | 'alt' | 'mediaContentType'> & {
               previewImage?: StorefrontAPI.Maybe<
                 Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
               >;
@@ -170,7 +190,6 @@ export type ProductFragment = Pick<
               >;
             })
         | ({ __typename: 'Model3d' } & Pick<StorefrontAPI.Model3d, 'id' | 'alt' | 'mediaContentType'> & {
-              sources: Array<Pick<StorefrontAPI.Model3dSource, 'url' | 'mimeType' | 'format' | 'filesize'>>;
               previewImage?: StorefrontAPI.Maybe<
                 Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
               >;
@@ -198,6 +217,36 @@ export type ProductFragment = Pick<
               product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
               selectedOptions: Array<Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>>;
               unitPrice?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>>;
+              metafields: Array<
+                StorefrontAPI.Maybe<
+                  Pick<StorefrontAPI.Metafield, 'key' | 'value' | 'type'> & {
+                    references?: StorefrontAPI.Maybe<{
+                      edges: Array<{
+                        node:
+                          | ({ __typename: 'MediaImage' } & Pick<
+                              StorefrontAPI.MediaImage,
+                              'id' | 'alt' | 'mediaContentType'
+                            > & {
+                                previewImage?: StorefrontAPI.Maybe<
+                                  Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                                >;
+                                image?: StorefrontAPI.Maybe<
+                                  Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>
+                                >;
+                              })
+                          | ({ __typename: 'Video' } & Pick<StorefrontAPI.Video, 'id' | 'alt' | 'mediaContentType'> & {
+                                previewImage?: StorefrontAPI.Maybe<
+                                  Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                                >;
+                                sources: Array<
+                                  Pick<StorefrontAPI.VideoSource, 'url' | 'mimeType' | 'format' | 'height' | 'width'>
+                                >;
+                              });
+                      }>;
+                    }>;
+                  }
+                >
+              >;
             }
           >;
           swatch?: StorefrontAPI.Maybe<
@@ -219,6 +268,34 @@ export type ProductFragment = Pick<
       product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
       selectedOptions: Array<Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>>;
       unitPrice?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>>;
+      metafields: Array<
+        StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Metafield, 'key' | 'value' | 'type'> & {
+            references?: StorefrontAPI.Maybe<{
+              edges: Array<{
+                node:
+                  | ({ __typename: 'MediaImage' } & Pick<
+                      StorefrontAPI.MediaImage,
+                      'id' | 'alt' | 'mediaContentType'
+                    > & {
+                        previewImage?: StorefrontAPI.Maybe<
+                          Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                        >;
+                        image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>>;
+                      })
+                  | ({ __typename: 'Video' } & Pick<StorefrontAPI.Video, 'id' | 'alt' | 'mediaContentType'> & {
+                        previewImage?: StorefrontAPI.Maybe<
+                          Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                        >;
+                        sources: Array<
+                          Pick<StorefrontAPI.VideoSource, 'url' | 'mimeType' | 'format' | 'height' | 'width'>
+                        >;
+                      });
+              }>;
+            }>;
+          }
+        >
+      >;
     }
   >;
   adjacentVariants: Array<
@@ -231,6 +308,34 @@ export type ProductFragment = Pick<
       product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
       selectedOptions: Array<Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>>;
       unitPrice?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>>;
+      metafields: Array<
+        StorefrontAPI.Maybe<
+          Pick<StorefrontAPI.Metafield, 'key' | 'value' | 'type'> & {
+            references?: StorefrontAPI.Maybe<{
+              edges: Array<{
+                node:
+                  | ({ __typename: 'MediaImage' } & Pick<
+                      StorefrontAPI.MediaImage,
+                      'id' | 'alt' | 'mediaContentType'
+                    > & {
+                        previewImage?: StorefrontAPI.Maybe<
+                          Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                        >;
+                        image?: StorefrontAPI.Maybe<Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>>;
+                      })
+                  | ({ __typename: 'Video' } & Pick<StorefrontAPI.Video, 'id' | 'alt' | 'mediaContentType'> & {
+                        previewImage?: StorefrontAPI.Maybe<
+                          Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                        >;
+                        sources: Array<
+                          Pick<StorefrontAPI.VideoSource, 'url' | 'mimeType' | 'format' | 'height' | 'width'>
+                        >;
+                      });
+              }>;
+            }>;
+          }
+        >
+      >;
     }
   >;
   seo: Pick<StorefrontAPI.Seo, 'description' | 'title'>;
@@ -331,7 +436,7 @@ export type ProductQuery = {
           node:
             | ({ __typename: 'ExternalVideo' } & Pick<
                 StorefrontAPI.ExternalVideo,
-                'id' | 'host' | 'originUrl' | 'embedUrl' | 'alt' | 'mediaContentType'
+                'id' | 'alt' | 'mediaContentType'
               > & {
                   previewImage?: StorefrontAPI.Maybe<
                     Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
@@ -344,7 +449,6 @@ export type ProductQuery = {
                   >;
                 })
             | ({ __typename: 'Model3d' } & Pick<StorefrontAPI.Model3d, 'id' | 'alt' | 'mediaContentType'> & {
-                  sources: Array<Pick<StorefrontAPI.Model3dSource, 'url' | 'mimeType' | 'format' | 'filesize'>>;
                   previewImage?: StorefrontAPI.Maybe<
                     Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
                   >;
@@ -372,6 +476,42 @@ export type ProductQuery = {
                   product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
                   selectedOptions: Array<Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>>;
                   unitPrice?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>>;
+                  metafields: Array<
+                    StorefrontAPI.Maybe<
+                      Pick<StorefrontAPI.Metafield, 'key' | 'value' | 'type'> & {
+                        references?: StorefrontAPI.Maybe<{
+                          edges: Array<{
+                            node:
+                              | ({ __typename: 'MediaImage' } & Pick<
+                                  StorefrontAPI.MediaImage,
+                                  'id' | 'alt' | 'mediaContentType'
+                                > & {
+                                    previewImage?: StorefrontAPI.Maybe<
+                                      Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                                    >;
+                                    image?: StorefrontAPI.Maybe<
+                                      Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>
+                                    >;
+                                  })
+                              | ({ __typename: 'Video' } & Pick<
+                                  StorefrontAPI.Video,
+                                  'id' | 'alt' | 'mediaContentType'
+                                > & {
+                                    previewImage?: StorefrontAPI.Maybe<
+                                      Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                                    >;
+                                    sources: Array<
+                                      Pick<
+                                        StorefrontAPI.VideoSource,
+                                        'url' | 'mimeType' | 'format' | 'height' | 'width'
+                                      >
+                                    >;
+                                  });
+                          }>;
+                        }>;
+                      }
+                    >
+                  >;
                 }
               >;
               swatch?: StorefrontAPI.Maybe<
@@ -393,6 +533,36 @@ export type ProductQuery = {
           product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
           selectedOptions: Array<Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>>;
           unitPrice?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>>;
+          metafields: Array<
+            StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'key' | 'value' | 'type'> & {
+                references?: StorefrontAPI.Maybe<{
+                  edges: Array<{
+                    node:
+                      | ({ __typename: 'MediaImage' } & Pick<
+                          StorefrontAPI.MediaImage,
+                          'id' | 'alt' | 'mediaContentType'
+                        > & {
+                            previewImage?: StorefrontAPI.Maybe<
+                              Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                            >;
+                            image?: StorefrontAPI.Maybe<
+                              Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>
+                            >;
+                          })
+                      | ({ __typename: 'Video' } & Pick<StorefrontAPI.Video, 'id' | 'alt' | 'mediaContentType'> & {
+                            previewImage?: StorefrontAPI.Maybe<
+                              Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                            >;
+                            sources: Array<
+                              Pick<StorefrontAPI.VideoSource, 'url' | 'mimeType' | 'format' | 'height' | 'width'>
+                            >;
+                          });
+                  }>;
+                }>;
+              }
+            >
+          >;
         }
       >;
       adjacentVariants: Array<
@@ -405,6 +575,36 @@ export type ProductQuery = {
           product: Pick<StorefrontAPI.Product, 'title' | 'handle'>;
           selectedOptions: Array<Pick<StorefrontAPI.SelectedOption, 'name' | 'value'>>;
           unitPrice?: StorefrontAPI.Maybe<Pick<StorefrontAPI.MoneyV2, 'amount' | 'currencyCode'>>;
+          metafields: Array<
+            StorefrontAPI.Maybe<
+              Pick<StorefrontAPI.Metafield, 'key' | 'value' | 'type'> & {
+                references?: StorefrontAPI.Maybe<{
+                  edges: Array<{
+                    node:
+                      | ({ __typename: 'MediaImage' } & Pick<
+                          StorefrontAPI.MediaImage,
+                          'id' | 'alt' | 'mediaContentType'
+                        > & {
+                            previewImage?: StorefrontAPI.Maybe<
+                              Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                            >;
+                            image?: StorefrontAPI.Maybe<
+                              Pick<StorefrontAPI.Image, 'altText' | 'url' | 'width' | 'height'>
+                            >;
+                          })
+                      | ({ __typename: 'Video' } & Pick<StorefrontAPI.Video, 'id' | 'alt' | 'mediaContentType'> & {
+                            previewImage?: StorefrontAPI.Maybe<
+                              Pick<StorefrontAPI.Image, 'id' | 'altText' | 'url' | 'width' | 'height'>
+                            >;
+                            sources: Array<
+                              Pick<StorefrontAPI.VideoSource, 'url' | 'mimeType' | 'format' | 'height' | 'width'>
+                            >;
+                          });
+                  }>;
+                }>;
+              }
+            >
+          >;
         }
       >;
       seo: Pick<StorefrontAPI.Seo, 'description' | 'title'>;
@@ -847,7 +1047,7 @@ interface GeneratedQueryTypes {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
-  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    encodedVariantExistence\n    encodedVariantAvailability\n\n    media(first: 250) {\n      edges {\n        node {\n          __typename\n          id\n          alt\n          mediaContentType\n          previewImage {        \n            id\n            altText\n            url\n            width               \n            height              \n          }\n          ... on MediaImage {\n            id\n            image {\n              altText\n              url\n              width             \n              height            \n            }\n          }\n          ... on Video {\n            id\n            sources {\n              url\n              mimeType\n              format\n              height\n              width\n            }\n          }\n          ... on Model3d {\n            id\n            sources {\n              url\n              mimeType\n              format\n              filesize\n            }\n          }\n          ... on ExternalVideo {\n            id\n            host\n            originUrl\n            embedUrl\n          }\n        }\n      }\n    }\n\n    metafields(identifiers: [\n      {namespace: "custom", key: "customizations"}\n      {namespace: "custom", key: "shipping_returns"}\n      {namespace: "custom", key: "faq"}\n    ]) {\n      key\n      value\n      type\n    }\n    \n    options {\n      name\n      optionValues {\n        name\n        firstSelectableVariant {\n          ...ProductVariant\n        }\n        swatch {\n          color\n          image {\n            previewImage {\n              url\n            }\n          }\n        }\n      }\n    }\n    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    adjacentVariants (selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    seo {\n      description\n      title\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n  }\n\n\n': {
+  '#graphql\n  query Product(\n    $country: CountryCode\n    $handle: String!\n    $language: LanguageCode\n    $selectedOptions: [SelectedOptionInput!]!\n  ) @inContext(country: $country, language: $language) {\n    product(handle: $handle) {\n      ...Product\n    }\n  }\n  #graphql\n  fragment Product on Product {\n    id\n    title\n    vendor\n    handle\n    descriptionHtml\n    description\n    encodedVariantExistence\n    encodedVariantAvailability\n\n    media(first: 250) {\n      edges {\n        node {\n          __typename\n          id\n          alt\n          mediaContentType\n          previewImage {        \n            id\n            altText\n            url\n            width               \n            height              \n          }\n          ... on MediaImage {\n            id\n            image {\n              altText\n              url\n              width             \n              height            \n            }\n          }\n          ... on Video {\n            id\n            sources {\n              url\n              mimeType\n              format\n              height\n              width\n            }\n          }\n        }\n      }\n    }\n\n    metafields(identifiers: [\n      {namespace: "custom", key: "customizations"}\n      {namespace: "custom", key: "shipping_returns"}\n      {namespace: "custom", key: "faq"}\n      \n      # Customization metafields\n      {namespace: "custom", key: "has_customization"}\n      {namespace: "custom", key: "customization_required"}\n      \n      # Text engraving\n      {namespace: "custom", key: "text_engraving"}\n      {namespace: "custom", key: "text_heading"}\n      {namespace: "custom", key: "text_helper"}\n      {namespace: "custom", key: "input_placeholder"}\n      {namespace: "custom", key: "text_positions"}\n      {namespace: "custom", key: "max_characters"}\n      \n      # Logo engraving\n      {namespace: "custom", key: "logo_engraving"}\n      {namespace: "custom", key: "logo_text_heading"}\n      {namespace: "custom", key: "logo_text_helper"}\n      {namespace: "custom", key: "logo_positions"}\n      \n      # Image overlay\n      {namespace: "custom", key: "image_overlay"}\n      {namespace: "custom", key: "image_overlay_text_heading"}\n      {namespace: "custom", key: "image_overlay_text_helper"}\n      {namespace: "custom", key: "image_overlay_aspect_ratio"}\n    ]) {\n      key\n      value\n      type\n    }\n    \n    options {\n      name\n      optionValues {\n        name\n        firstSelectableVariant {\n          ...ProductVariant\n        }\n        swatch {\n          color\n          image {\n            previewImage {\n              url\n            }\n          }\n        }\n      }\n    }\n    selectedOrFirstAvailableVariant(selectedOptions: $selectedOptions, ignoreUnknownOptions: true, caseInsensitiveMatch: true) {\n      ...ProductVariant\n    }\n    adjacentVariants (selectedOptions: $selectedOptions) {\n      ...ProductVariant\n    }\n    seo {\n      description\n      title\n    }\n  }\n  #graphql\n  fragment ProductVariant on ProductVariant {\n    availableForSale\n    compareAtPrice {\n      amount\n      currencyCode\n    }\n    id\n    image {\n      __typename\n      id\n      url\n      altText\n      width\n      height\n    }\n    price {\n      amount\n      currencyCode\n    }\n    product {\n      title\n      handle\n    }\n    selectedOptions {\n      name\n      value\n    }\n    sku\n    title\n    unitPrice {\n      amount\n      currencyCode\n    }\n\n    metafields(identifiers: [\n      {namespace: "custom", key: "variant_gallery"}\n    ]) {\n      key\n      value\n      type\n      references(first: 250) {\n        edges {\n          node {\n            ... on MediaImage {\n              __typename\n              id\n              alt\n              mediaContentType\n              previewImage {        \n                id\n                altText\n                url\n                width               \n                height              \n              }\n              image {\n                altText\n                url\n                width             \n                height            \n              }\n            }\n            ... on Video {\n              __typename\n              id\n              alt\n              mediaContentType\n              previewImage {        \n                id\n                altText\n                url\n                width               \n                height              \n              }\n              sources {\n                url\n                mimeType\n                format\n                height\n                width\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n\n\n': {
     return: ProductQuery;
     variables: ProductQueryVariables;
   };

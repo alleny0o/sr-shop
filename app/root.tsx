@@ -1,5 +1,10 @@
+// shopify imports
 import { Analytics, getShopAnalytics, useNonce } from '@shopify/hydrogen';
 import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
+import { CountryCode } from '@shopify/hydrogen/customer-account-api-types';
+import { LanguageCode } from '@shopify/hydrogen/storefront-api-types';
+
+// react-router imports
 import {
   Outlet,
   useRouteError,
@@ -12,16 +17,25 @@ import {
   useRouteLoaderData,
   redirect,
 } from 'react-router';
+
+// third-party imports
+import { useJudgeme } from '@judgeme/shopify-hydrogen';
+
+// asset imports
 import favicon from '~/assets/favicon.svg';
-import { HEADER_QUERY, FOOTER_QUERY } from './graphql/storefront/menus';
 import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
+
+// component imports
 import { PageLayout } from '~/components/layout/PageLayout';
+
+// graphql imports
+import { HEADER_QUERY, FOOTER_QUERY } from './graphql/storefront/menus';
 import { ALL_LOCALIZATION_QUERY } from './graphql/storefront/locale';
+
+// lib imports
 import { resolveEffectiveLocale } from './lib/locale';
-import { CountryCode } from '@shopify/hydrogen/customer-account-api-types';
-import { LanguageCode } from '@shopify/hydrogen/storefront-api-types';
 
 export type RootLoader = typeof loader;
 
@@ -92,16 +106,14 @@ export async function loader(args: LoaderFunctionArgs) {
     const currentPrefix = currentPrefixMatch?.[1]?.toLowerCase();
 
     // Always redirect if we have a locale but no prefix in URL, or wrong prefix
-    const needsRedirect = locale?.prefix && (
-      !currentPrefix || // No prefix in URL (like localhost:3000)
-      currentPrefix !== locale.prefix.toLowerCase() // Wrong prefix in URL
-    );
+    const needsRedirect =
+      locale?.prefix &&
+      (!currentPrefix || // No prefix in URL (like localhost:3000)
+        currentPrefix !== locale.prefix.toLowerCase()); // Wrong prefix in URL
 
     if (needsRedirect) {
       // Remove any existing locale prefix from pathname
-      const pathnameWithoutPrefix = currentPrefix 
-        ? url.pathname.replace(/^\/[a-z]{2}-[a-z]{2}/i, '') 
-        : url.pathname;
+      const pathnameWithoutPrefix = currentPrefix ? url.pathname.replace(/^\/[a-z]{2}-[a-z]{2}/i, '') : url.pathname;
 
       // Ensure the path starts with /
       const normalizedPath = pathnameWithoutPrefix.startsWith('/')
@@ -112,7 +124,7 @@ export async function loader(args: LoaderFunctionArgs) {
       const redirectUrl = `/${locale.prefix}${normalizedPath}`.replace(/\/+$/, '') + url.search;
 
       console.log('Redirecting:', url.pathname, '->', redirectUrl);
-      
+
       throw redirect(redirectUrl, {
         headers: cookie ? { 'Set-Cookie': cookie } : {},
       });
@@ -147,6 +159,13 @@ export async function loader(args: LoaderFunctionArgs) {
         country: locale?.country,
         language: locale?.language,
       },
+      // Add Judge.me configuration
+      judgeme: {
+        shopDomain: args.context.env.JUDGEME_SHOP_DOMAIN,
+        publicToken: args.context.env.JUDGEME_PUBLIC_TOKEN,
+        cdnHost: args.context.env.JUDGEME_CDN_HOST,
+        delay: 100, // optional parameter, default to 500ms
+      },
     };
   } catch (error) {
     // Check if this is a redirect response - if so, re-throw it
@@ -156,7 +175,7 @@ export async function loader(args: LoaderFunctionArgs) {
 
     // Only fallback if it's not a redirect
     console.error('Loader error:', error);
-    
+
     const fallbackLocale = { country: 'US' as CountryCode, language: 'EN' as LanguageCode, prefix: 'en-us' };
     args.context.storefront.i18n.country = fallbackLocale.country;
     args.context.storefront.i18n.language = fallbackLocale.language;
@@ -179,6 +198,13 @@ export async function loader(args: LoaderFunctionArgs) {
         withPrivacyBanner: false,
         country: fallbackLocale.country,
         language: fallbackLocale.language,
+      },
+      // Add Judge.me configuration
+      judgeme: {
+        shopDomain: args.context.env.JUDGEME_SHOP_DOMAIN,
+        publicToken: args.context.env.JUDGEME_PUBLIC_TOKEN,
+        cdnHost: args.context.env.JUDGEME_CDN_HOST,
+        delay: 100, // optional parameter, default to 500ms
       },
     };
   }
@@ -262,7 +288,15 @@ export function Layout({ children }: { children?: React.ReactNode }) {
   );
 }
 
+
 export default function App() {
+  const data = useRouteLoaderData<RootLoader>('root');
+  
+  // Initialize Judge.me if data is available
+  if (data?.judgeme) {
+    useJudgeme(data.judgeme);
+  }
+  
   return <Outlet />;
 }
 

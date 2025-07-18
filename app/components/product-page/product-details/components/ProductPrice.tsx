@@ -15,11 +15,11 @@ export const ProductPrice = ({ price, compareAtPrice }: ProductPriceProps) => {
     <div className="font-inter">
       {hasDiscount ? (
         <div className="flex gap-3 items-center">
-          <Money data={price} className="text-base text-black font-light" />
-          <Money data={compareAtPrice} className="text-sm text-gray-400 line-through font-light" />
+          <Money data={price} className="text-base sm:text-lg text-primary font-normal" />
+          <Money data={compareAtPrice} className="text-sm sm:text-base text-muted line-through font-extralight" />
         </div>
       ) : (
-        <Money data={price} className="text-base text-black font-light" />
+        <Money data={price} className="text-base sm:text-lg text-primary font-normal" />
       )}
     </div>
   );

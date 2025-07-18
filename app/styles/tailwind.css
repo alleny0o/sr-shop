@@ -37,7 +37,7 @@
   --font-inter: 'Inter', sans-serif;
   --font-source-serif-4: 'Source Serif 4', serif;
 
-  /* colors */
+  /* background colors */
   --color-pastel-green-light: #f3faf7;   /* very light pastel green - 60% usage */
   --color-pastel-green-medium: #b0ccbc;  /* medium pastel green - 30% usage */
   --color-pastel-green-dark: #92bda2;    /* darker pastel green - 10% usage */
@@ -46,8 +46,23 @@
   --color-pastel-yellow-medium: #FDFBEF; /* medium pastel yellow - 30% usage */
   --color-pastel-yellow-dark: #F9F5E7;   /* darker pastel yellow - 10% usage */
 
+  --color-pastel-blue-light: #f8fafc;    /* very light pastel blue */
+  --color-pastel-blue-medium: #e1eaf4;   /* medium pastel blue */
+  --color-pastel-blue-dark: #cbd5e0;     /* darker pastel blue */
+
+  --color-pastel-pink-light: #fdf8f6;    /* very light pastel pink */
+  --color-pastel-pink-medium: #f4e8e2;   /* medium pastel pink */
+  --color-pastel-pink-dark: #e8d5cc;     /* darker pastel pink */
+
   /* text colors */
-  --color-pastel-green-text: #6b9c7a;
+  --color-primary: #000000;   
+  --color-secondary: #3a3a36;
+  --color-muted: #9ca3af;
+  --color-required-red: #DC2626;
+
+  /* border colors */
+  --color-strong: #000000;
+  --color-soft: #d1d5db;
 
   /* extended max-width scale */
   --max-width-8xl: 88rem;    /* 1408px */

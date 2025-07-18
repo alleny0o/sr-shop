@@ -1,12 +1,9 @@
-import {Link, useNavigate} from 'react-router';
-import {type MappedProductOptions} from '@shopify/hydrogen';
-import type {
-  Maybe,
-  ProductOptionValueSwatch,
-} from '@shopify/hydrogen/storefront-api-types';
-import {AddToCartButton} from '../../../buttons/AddToCartButton';
-import {useAside} from '../../../Aside';
-import type {ProductFragment} from 'storefrontapi.generated';
+import { type MappedProductOptions } from '@shopify/hydrogen';
+import type { Maybe, ProductOptionValueSwatch } from '@shopify/hydrogen/storefront-api-types';
+import { AddToCartButton } from '../../../buttons/AddToCartButton';
+import { useAside } from '../../../Aside';
+import type { ProductFragment } from 'storefrontapi.generated';
+import { Link, useNavigate } from 'react-router';
 
 export function ProductForm({
   productOptions,
@@ -16,74 +13,95 @@ export function ProductForm({
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
 }) {
   const navigate = useNavigate();
-  const {open} = useAside();
+  const { open } = useAside();
+
   return (
-    <div className="product-form">
-      {productOptions.map((option) => {
+    <div className="space-y-6">
+      {productOptions.map((option, index) => {
         // If there is only a single value in the option values, don't display the option
         if (option.optionValues.length === 1) return null;
 
+        // Get the selected value name for display
+        const selectedValue = option.optionValues.find(v => v.selected)?.name || '';
+
         return (
-          <div className="product-options" key={option.name}>
-            <h5>{option.name}</h5>
-            <div className="product-options-grid">
-              {option.optionValues.map((value) => {
-                const {
-                  name,
-                  handle,
-                  variantUriQuery,
-                  selected,
-                  available,
-                  exists,
-                  isDifferentProduct,
-                  swatch,
-                } = value;
+          <div key={option.name}>
+            {/* Option Header */}
+            <div className="flex flex-row space-x-2 mb-3.5">
+              <h3 className="text-sm font-medium text-primary font-inter">{option.name}:</h3>
+              <p className="text-sm text-secondary font-inter">{selectedValue}</p>
+            </div>
+
+            {/* Option Values */}
+            <div className="flex flex-wrap gap-2">
+              {option.optionValues.map(value => {
+                const { name, handle, variantUriQuery, selected, available, exists, isDifferentProduct, swatch } =
+                  value;
+
+                // Determine the type for this specific value
+                const isImageValue = swatch?.image?.previewImage?.url;
+                const isColorValue = swatch?.color;
+
+                const baseClasses = `
+                  transition-all duration-150 ease-in-out font-inter relative cursor-pointer group
+                `.trim();
+
+                const colorClasses = `
+                  ${baseClasses}
+                  w-9 h-9 rounded-full border-1 flex items-center justify-center
+                  ${selected ? 'border-strong hover:border-strong' : 'border-soft hover:border-strong'}
+                `.trim();
+
+                const imageClasses = `
+                  ${baseClasses}
+                  w-14 h-14 rounded-none border-1 overflow-hidden
+                  ${selected ? 'border-strong hover:border-strong' : 'border-soft hover:border-strong'}
+                `.trim();
+
+                const defaultClasses = `
+                  ${baseClasses}
+                  px-3 py-2 text-sm font-light text-center font-inter
+                  ${
+                    selected
+                      ? 'text-primary border-1 border-strong hover:border-strong'
+                      : 'text-primary border-1 border-soft hover:border-strong'
+                  }
+                `.trim();
+
+                // Choose classes based on value type
+                const valueClasses = isImageValue ? imageClasses : isColorValue ? colorClasses : defaultClasses;
 
                 if (isDifferentProduct) {
-                  // SEO
-                  // When the variant is a combined listing child product
-                  // that leads to a different url, we need to render it
-                  // as an anchor tag
                   return (
                     <Link
-                      className="product-options-item"
                       key={option.name + name}
                       prefetch="intent"
                       preventScrollReset
                       replace
                       to={`/products/${handle}?${variantUriQuery}`}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
+                      className={valueClasses}
+                      title={name}
                     >
-                      <ProductOptionSwatch swatch={swatch} name={name} />
+                      <ProductOptionSwatch
+                        swatch={swatch}
+                        name={name}
+                        isColor={!!isColorValue}
+                        isImage={!!isImageValue}
+                        available={available}
+                        selected={selected}
+                      />
                     </Link>
                   );
                 } else {
-                  // SEO
-                  // When the variant is an update to the search param,
-                  // render it as a button with javascript navigating to
-                  // the variant so that SEO bots do not index these as
-                  // duplicated links
                   return (
                     <button
                       type="button"
-                      className={`product-options-item${
-                        exists && !selected ? ' link' : ''
-                      }`}
                       key={option.name + name}
-                      style={{
-                        border: selected
-                          ? '1px solid black'
-                          : '1px solid transparent',
-                        opacity: available ? 1 : 0.3,
-                      }}
-                      disabled={!exists}
+                      className={valueClasses}
+                      disabled={false}
+                      title={name}
                       onClick={() => {
-                        if (!selected) {
+                        if (!selected && exists) {
                           navigate(`?${variantUriQuery}`, {
                             replace: true,
                             preventScrollReset: true,
@@ -91,35 +109,23 @@ export function ProductForm({
                         }
                       }}
                     >
-                      <ProductOptionSwatch swatch={swatch} name={name} />
+                      <ProductOptionSwatch
+                        swatch={swatch}
+                        name={name}
+                        isColor={!!isColorValue}
+                        isImage={!!isImageValue}
+                        available={available}
+                        selected={selected}
+                      />
                     </button>
                   );
                 }
               })}
             </div>
-            <br />
           </div>
         );
       })}
-      <AddToCartButton
-        disabled={!selectedVariant || !selectedVariant.availableForSale}
-        onClick={() => {
-          open('cart');
-        }}
-        lines={
-          selectedVariant
-            ? [
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                  selectedVariant,
-                },
-              ]
-            : []
-        }
-      >
-        {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-      </AddToCartButton>
+
     </div>
   );
 }
@@ -127,24 +133,57 @@ export function ProductForm({
 function ProductOptionSwatch({
   swatch,
   name,
+  isColor = false,
+  isImage = false,
+  available = true,
+  selected = false,
 }: {
   swatch?: Maybe<ProductOptionValueSwatch> | undefined;
   name: string;
+  isColor?: boolean;
+  isImage?: boolean;
+  available?: boolean;
+  selected?: boolean;
 }) {
   const image = swatch?.image?.previewImage?.url;
   const color = swatch?.color;
 
-  if (!image && !color) return name;
+  if (isImage && image) {
+    return (
+      <div className="relative w-full h-full">
+        <img src={image} alt={name} className="w-full h-full object-cover !rounded-none" />
+        {!available && (
+          <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+            <div
+              className={`w-full h-[1px] transform rotate-45 transition-colors duration-150 ${selected ? 'bg-strong' : 'bg-soft group-hover:bg-strong group-active:bg-strong'}`}
+            ></div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
+  if (isColor && color) {
+    return (
+      <div className="relative w-full h-full rounded-full flex items-center justify-center">
+        <div className="w-7 h-7 rounded-full" style={{ backgroundColor: color }} aria-label={name} />
+        {!available && (
+          <div className="absolute inset-0 bg-white/50 rounded-full flex items-center justify-center">
+            <div
+              className={`w-full h-[1px] transform rotate-45 transition-colors duration-150 ${selected ? 'bg-strong' : 'bg-soft group-hover:bg-strong group-active:bg-strong'}`}
+            ></div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // For non-color, non-image options, just return the name with overlay
   return (
-    <div
-      aria-label={name}
-      className="product-option-label-swatch"
-      style={{
-        backgroundColor: color || 'transparent',
-      }}
-    >
-      {!!image && <img src={image} alt={name} />}
+    <div className="relative w-full h-full">
+      <span className={`block ${!available ? 'line-through opacity-50' : ''}`}>
+        {name}
+      </span>
     </div>
   );
 }

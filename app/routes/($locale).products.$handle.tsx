@@ -2,7 +2,7 @@
 import { PRODUCT_QUERY } from '~/graphql/storefront/product';
 
 // remix server
-import { redirect, type LoaderFunctionArgs } from '@shopify/remix-oxygen';
+import { type LoaderFunctionArgs } from '@shopify/remix-oxygen';
 
 // react router
 import { useLoaderData, type MetaFunction } from 'react-router';
@@ -23,6 +23,7 @@ import { redirectIfHandleIsLocalized } from '~/lib/redirect';
 // components
 import { ProductMedia } from '~/components/product-page/product-media/ProductMedia';
 import { ProductDetails } from '~/components/product-page/product-details/ProductDetails';
+import { ProductVariant } from '@shopify/hydrogen/storefront-api-types';
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
@@ -110,13 +111,13 @@ export default function Product() {
 
   return (
     <section id="product-page" className="min-h-screen max-w-10xl mx-auto py-4 lg:px-8">
-      <div className="grid grid-cols-1 lg:grid-cols-8 gap-2 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 lg:gap-8">
         {/* Left Side - Media */}
-        <div className="col-span-1 lg:col-span-5">
-          <ProductMedia media={media} selectedVariant={selectedVariant} />
+        <div className="col-span-1 lg:col-span-3 lg:sticky lg:top-18 lg:self-start lg:z-[1]">
+          <ProductMedia media={media} selectedVariant={selectedVariant as ProductVariant} />
         </div>
         {/* Right Side - Details & CTA */}
-        <div className="col-span-1 lg:col-span-3 px-4 sm:px-6">
+        <div className="col-span-1 lg:col-span-2 px-4 sm:px-6 lg:px-0">
           <ProductDetails product={product} productOptions={productOptions} selectedVariant={selectedVariant} />
         </div>
       </div>

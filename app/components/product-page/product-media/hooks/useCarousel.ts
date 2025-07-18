@@ -9,8 +9,8 @@ interface UseSimpleCarouselProps {
 
 export const useCarousel = ({ 
   mediaCount, 
-  autoReset = true,
-  scrollDebounceMs = 150 
+  autoReset = true, 
+  scrollDebounceMs = 150
 }: UseSimpleCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -54,19 +54,22 @@ export const useCarousel = ({
   }, [handleScroll]);
 
   // Programmatic navigation (for dot clicks and arrows)
-  const goToIndex = useCallback((index: number) => {
-    if (index >= 0 && index < mediaCount) {
-      setCurrentIndex(index);
-      
-      // Scroll mobile carousel if it exists (for dot clicks)
-      if (scrollRef.current) {
-        scrollRef.current.scrollTo({
-          left: index * scrollRef.current.clientWidth,
-          behavior: 'smooth',
-        });
+  const goToIndex = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < mediaCount) {
+        setCurrentIndex(index);
+
+        // Scroll mobile carousel if it exists (for dot clicks)
+        if (scrollRef.current) {
+          scrollRef.current.scrollTo({
+            left: index * scrollRef.current.clientWidth,
+            behavior: 'smooth',
+          });
+        }
       }
-    }
-  }, [mediaCount]);
+    },
+    [mediaCount],
+  );
 
   const goToPrevious = useCallback(() => {
     const newIndex = Math.max(currentIndex - 1, 0);
@@ -88,18 +91,18 @@ export const useCarousel = ({
     // State
     currentIndex,
     isScrolling,
-    
+
     // Actions
     goToIndex,
     goToPrevious,
     goToNext,
-    
+
     // Selectors
     canGoToPrevious,
     canGoToNext,
     hasMultipleItems,
     isEmpty,
-    
+
     // Refs
     scrollRef,
   };
