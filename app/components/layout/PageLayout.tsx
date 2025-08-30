@@ -2,7 +2,7 @@ import { Await, Link } from 'react-router';
 import { Suspense, useId } from 'react';
 import type { CartApiQueryFragment, FooterQuery, HeaderQuery } from 'storefrontapi.generated';
 import { AsideComponent } from '~/components/aside';
-import { Footer } from '~/components/Footer';
+import { Footer } from '~/components/footer/Footer';
 import { Header } from '~/components/header/Header';
 import { CartMain } from '~/components/CartMain';
 import { HeaderMenu } from '~/components/header/HeaderMenu';

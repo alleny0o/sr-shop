@@ -8,9 +8,3 @@ node_modules
 .shopify
 .react-router
 package-lock.json
-
-# Additional suggestions
-*.log
-.DS_Store
-.vscode/
-.idea/
