@@ -1,17 +1,13 @@
-import { ProductQuery } from 'storefrontapi.generated';
+import { ProductFragment, ProductQuery } from 'storefrontapi.generated';
 
-export function getMetafield(product: NonNullable<ProductQuery['product']>, key: string): string | null {
-  return product.metafields?.find((field: any) => field.key === key)?.value || null;
+export function getMetafield(metafields: ProductFragment['metafields'], key: string): string | null {
+  return metafields?.find((field: any) => field?.key === key)?.value || null;
 }
 
-export function getMetaFieldAsBoolean(product: NonNullable<ProductQuery['product']>, key: string): boolean {
-  return getMetafield(product, key) === 'true';
+export function getMetaFieldAsBoolean(metafields: ProductFragment['metafields'], key: string): boolean {
+  return getMetafield(metafields, key) === 'true';
 }
 
-export function getMetafieldAsNumber(product: NonNullable<ProductQuery['product']>, key: string): number {
-  return parseInt(getMetafield(product, key) || '0');
-}
-
-export function getMetaFieldAsList(product: NonNullable<ProductQuery['product']>, key: string): string[] {
-  return getMetafield(product, key)?.split(',') || [];
+export function getMetafieldAsNumber(metafields: ProductFragment['metafields'], key: string): number {
+  return parseInt(getMetafield(metafields, key) || '0');
 }

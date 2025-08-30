@@ -138,29 +138,10 @@ export const PRODUCT_FRAGMENT = `#graphql
 
     metafields(identifiers: [
       
-      # Customization metafields
-      {namespace: "custom", key: "has_customization"}
-      {namespace: "custom", key: "customization_required"}
-      
-      # Text engraving
-      {namespace: "custom", key: "text_engraving"}
-      {namespace: "custom", key: "text_heading"}
-      {namespace: "custom", key: "text_helper"}
-      {namespace: "custom", key: "input_placeholder"}
-      {namespace: "custom", key: "text_positions"}
-      {namespace: "custom", key: "max_characters"}
-      
-      # Logo engraving
-      {namespace: "custom", key: "logo_engraving"}
-      {namespace: "custom", key: "logo_text_heading"}
-      {namespace: "custom", key: "logo_text_helper"}
-      {namespace: "custom", key: "logo_positions"}
-      
-      # Image overlay
-      {namespace: "custom", key: "image_overlay"}
-      {namespace: "custom", key: "image_overlay_text_heading"}
-      {namespace: "custom", key: "image_overlay_text_helper"}
-      {namespace: "custom", key: "image_overlay_aspect_ratio"}
+      # Personalization metafields
+      {namespace: "custom", key: "personalization_required"}
+      {namespace: "custom", key: "personalization"}
+
 
       # More details fields
       {namespace: "custom", key: "shipping_returns"}
@@ -169,6 +150,17 @@ export const PRODUCT_FRAGMENT = `#graphql
       key
       value
       type
+      reference {
+        ... on Metaobject {
+          id
+          type
+          fields {
+            key
+            value
+            type
+          }
+        }
+      }
     }
     
     options {

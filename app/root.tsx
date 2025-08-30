@@ -18,9 +18,6 @@ import {
   redirect,
 } from 'react-router';
 
-// third-party imports
-import { useJudgeme } from '@judgeme/shopify-hydrogen';
-
 // asset imports
 import favicon from '~/assets/favicon.svg';
 import resetStyles from '~/styles/reset.css?url';
@@ -159,13 +156,6 @@ export async function loader(args: LoaderFunctionArgs) {
         country: locale?.country,
         language: locale?.language,
       },
-      // Add Judge.me configuration
-      judgeme: {
-        shopDomain: args.context.env.JUDGEME_SHOP_DOMAIN,
-        publicToken: args.context.env.JUDGEME_PUBLIC_TOKEN,
-        cdnHost: args.context.env.JUDGEME_CDN_HOST,
-        delay: 100, // optional parameter, default to 500ms
-      },
     };
   } catch (error) {
     // Check if this is a redirect response - if so, re-throw it
@@ -198,13 +188,6 @@ export async function loader(args: LoaderFunctionArgs) {
         withPrivacyBanner: false,
         country: fallbackLocale.country,
         language: fallbackLocale.language,
-      },
-      // Add Judge.me configuration
-      judgeme: {
-        shopDomain: args.context.env.JUDGEME_SHOP_DOMAIN,
-        publicToken: args.context.env.JUDGEME_PUBLIC_TOKEN,
-        cdnHost: args.context.env.JUDGEME_CDN_HOST,
-        delay: 100, // optional parameter, default to 500ms
       },
     };
   }
@@ -290,13 +273,6 @@ export function Layout({ children }: { children?: React.ReactNode }) {
 
 
 export default function App() {
-  const data = useRouteLoaderData<RootLoader>('root');
-  
-  // Initialize Judge.me if data is available
-  if (data?.judgeme) {
-    useJudgeme(data.judgeme);
-  }
-  
   return <Outlet />;
 }
 

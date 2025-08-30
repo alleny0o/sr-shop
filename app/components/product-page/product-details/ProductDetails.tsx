@@ -9,10 +9,6 @@ import { ProductTitle } from './components/ProductTitle';
 import { ProductPrice } from './components/ProductPrice';
 import { ProductForm } from './components/ProductForm';
 
-// judgeme components
-import { JudgemePreviewBadge } from '@judgeme/shopify-hydrogen';
-import { PersonalizationButton } from './components/PersonalizationButton';
-
 type ProductDetailsProps = {
   product: ProductQuery['product'];
   productOptions: MappedProductOptions[];
@@ -31,12 +27,7 @@ export const ProductDetails = ({ product, productOptions, selectedVariant }: Pro
       </div>
 
       {/* Product Form */}
-      <ProductForm productOptions={productOptions} selectedVariant={selectedVariant} />
-
-      {/* Customization Form */}
-      <PersonalizationButton product={product} />
-
-      {/* Add To Cart Button */}
+      <ProductForm metafields={product.metafields} productOptions={productOptions} selectedVariant={selectedVariant} />
 
       {/* Product Description */}
 

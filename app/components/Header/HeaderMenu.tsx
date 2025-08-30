@@ -1,5 +1,5 @@
 import { HeaderQuery } from 'storefrontapi.generated';
-import { useAside } from '../Aside';
+import { useAside } from '../aside';
 import { NavLink } from 'react-router';
 
 export type Viewport = 'desktop' | 'mobile';
@@ -55,7 +55,7 @@ export function HeaderMenu({ menu, primaryDomainUrl, viewport, publicStoreDomain
                     key={item.id} 
                     to={url} 
                     prefetch="intent"
-                    className="header-menu-item font-inter text-sm font-light"
+                    className="cursor-pointer font-inter text-sm font-light"
                 >
                     {item.title}
                 </NavLink>

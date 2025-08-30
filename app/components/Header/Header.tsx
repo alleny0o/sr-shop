@@ -2,7 +2,7 @@ import { NavLink } from 'react-router';
 import { useEffect, useState } from 'react';
 import type { HeaderQuery, CartApiQueryFragment } from 'storefrontapi.generated';
 import { HeaderMenu } from '../header/HeaderMenu';
-import { useAside } from '../Aside';
+import { useAside } from '../aside';
 import { HeaderMenuMobileToggle } from '../header/HeaderMenuMobileToggle';
 import { SearchToggle } from '../header/SearchToggle';
 import { HeaderCtas } from '../header/HeaderCtas';
@@ -51,7 +51,7 @@ export function Header({ header, cart, isLoggedIn, publicStoreDomain }: HeaderPr
       </div>
 
       {/* Header */}
-      <header id="header" className="sticky top-0 w-full z-40 bg-pastel-yellow-light">
+      <header id="header" className="sticky top-0 w-full z-[500] bg-pastel-yellow-light">
         <div className="max-w-10xl mx-auto">
           <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 py-1">
             {/* Left Section */}

@@ -19,9 +19,18 @@ declare global {
   const process: {env: {NODE_ENV: 'production' | 'development'}};
 
   interface Env extends HydrogenEnv {
-    JUDGEME_SHOP_DOMAIN: any;
-    JUDGEME_PUBLIC_TOKEN: any;
-    JUDGEME_CDN_HOST: any;
+    // The AWS region where your resources (S3, Rekognition, etc.) are hosted.
+    AWS_REGION: string;
+  
+    // IAM user credentials for the 'sr-laserwork-uploader' user.
+    AWS_ACCESS_KEY_ID: string;
+    AWS_SECRET_ACCESS_KEY: string;
+  
+    // The S3 bucket used for storing uploaded assets (e.g. product images).
+    S3_BUCKET_NAME: string;
+  
+    // CloudFront distribution domain used to serve S3 content.
+    CLOUDFRONT_DOMAIN: string;
   }
 }
 

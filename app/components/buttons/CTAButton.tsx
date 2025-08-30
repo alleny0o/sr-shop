@@ -11,7 +11,7 @@ interface CTAButtonProps {
   font?: FontFamily;
   weight?: FontWeight;
   tracking?: LetterSpacing;
-  size?: number; // rem
+  size?: number;
   className?: string;
   variant?: 'primary' | 'secondary';
   backgroundColor?: string;

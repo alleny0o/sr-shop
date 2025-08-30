@@ -37,39 +37,62 @@
   --font-inter: 'Inter', sans-serif;
   --font-source-serif-4: 'Source Serif 4', serif;
 
+  /* layout */
+  --aside-width: 500px;
+  --header-height: 50px;
+
   /* background colors */
-  --color-pastel-green-light: #f3faf7;   /* very light pastel green - 60% usage */
-  --color-pastel-green-medium: #b0ccbc;  /* medium pastel green - 30% usage */
-  --color-pastel-green-dark: #92bda2;    /* darker pastel green - 10% usage */
+  --color-pastel-green-light: #f3faf7; /* very light pastel green - 60% usage */
+  --color-pastel-green-medium: #b0ccbc; /* medium pastel green - 30% usage */
+  --color-pastel-green-dark: #92bda2; /* darker pastel green - 10% usage */
 
-  --color-pastel-yellow-light: #FEFCF5;  /* very light pastel yellow - 60% usage */
-  --color-pastel-yellow-medium: #FDFBEF; /* medium pastel yellow - 30% usage */
-  --color-pastel-yellow-dark: #F9F5E7;   /* darker pastel yellow - 10% usage */
+  --color-pastel-yellow-light: #fefcf5; /* very light pastel yellow - 60% usage */
+  --color-pastel-yellow-medium: #fdfbef; /* medium pastel yellow - 30% usage */
+  --color-pastel-yellow-dark: #f9f5e7; /* darker pastel yellow - 10% usage */
 
-  --color-pastel-blue-light: #f8fafc;    /* very light pastel blue */
-  --color-pastel-blue-medium: #e1eaf4;   /* medium pastel blue */
-  --color-pastel-blue-dark: #cbd5e0;     /* darker pastel blue */
+  /* new pastel blue colors since company likes blue */
+  --color-pastel-blue-light: #f0f7ff; /* very light pastel blue */
+  --color-pastel-blue-medium: #bdd7f0; /* medium pastel blue */
+  --color-pastel-blue-dark: #a0c4e8; /* darker pastel blue */
 
-  --color-pastel-pink-light: #fdf8f6;    /* very light pastel pink */
-  --color-pastel-pink-medium: #f4e8e2;   /* medium pastel pink */
-  --color-pastel-pink-dark: #e8d5cc;     /* darker pastel pink */
+  /* bronze color */
+  --color-bronze-light: #f1e7db; /* warm, soft metallic hint */
+  --color-bronze-medium: #d8bfa5; /* hover — clear bronze presence */
+  --color-bronze-dark: #a57e5f; /* border/text — classic bronze anchor */
 
   /* text colors */
-  --color-primary: #000000;   
-  --color-secondary: #3a3a36;
-  --color-muted: #9ca3af;
-  --color-required-red: #DC2626;
+  --color-primary: #000000;
+  --color-secondary: #5e5e66;
+  --color-muted: #90959e;
 
   /* border colors */
   --color-strong: #000000;
   --color-soft: #d1d5db;
 
+  /* additional semantic colors for form components */
+  --color-disabled: #e5e7eb; /* for disabled states */
+  --color-focus-ring: #9ca3af; /* for focus rings */
+  --color-hover: #4b5563; /* for hover states */
+
+  /* error colors */
+  --color-error-bg: #fef2f2; /* light red/pink background */
+  --color-error-border: #fca5a5; /* soft red border */
+  --color-error-text: #dc2626; /* strong red text (used for asterisk and messages) */
+
+  /* atc button colors */
+  --color-atc-button-bg: #1a1a1a; /* warmer black with subtle brown undertone */
+  --color-atc-button-hover: #404040; /* more noticeable charcoal, still premium */
+  --color-atc-button-active: #0d0d0d; /* slightly darker than base for pressed feel */
+  --color-atc-button-text: #fefefe; /* softer white, less harsh than pure white */
+  --color-atc-button-disabled-bg: #e5e7eb; /* warm light gray */
+  --color-atc-button-disabled-text: #9ca3af; /* muted gray, maintains readability */
+
   /* extended max-width scale */
-  --max-width-8xl: 88rem;    /* 1408px */
-  --max-width-9xl: 96rem;    /* 1536px */
-  --max-width-10xl: 104rem;  /* 1664px */
-  --max-width-11xl: 112rem;  /* 1792px */
-  --max-width-12xl: 120rem;  /* 1920px */
-  --max-width-13xl: 128rem;  /* 2048px */
-  --max-width-14xl: 136rem;  /* 2176px */
+  --max-width-8xl: 88rem; /* 1408px */
+  --max-width-9xl: 96rem; /* 1536px */
+  --max-width-10xl: 104rem; /* 1664px */
+  --max-width-11xl: 112rem; /* 1792px */
+  --max-width-12xl: 120rem; /* 1920px */
+  --max-width-13xl: 128rem; /* 2048px */
+  --max-width-14xl: 136rem; /* 2176px */
 }

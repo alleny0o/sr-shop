@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Await, useAsyncValue } from 'react-router';
 import { ShoppingBasket } from 'lucide-react';
-import { useAside } from '~/components/Aside';
+import { useAside } from '../aside';
 import { useAnalytics, useOptimisticCart } from '@shopify/hydrogen';
 import type { CartApiQueryFragment } from 'storefrontapi.generated';
 
@@ -27,7 +27,7 @@ function CartBadge({ count }: { count: number | null }) {
 
   return (
     <button
-      className="relative p-1 transition-all duration-200"
+      className="relative p-1 transition-all duration-200 cursor-pointer"
       onClick={() => {
         open('cart');
         publish('cart_viewed', {
@@ -41,7 +41,7 @@ function CartBadge({ count }: { count: number | null }) {
     >
       <ShoppingBasket className="w-6 h-6" strokeWidth={1} />
       {count !== null && count > 0 && (
-        <span className="absolute -top-1 -right-1 bg-brand-green-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-medium leading-none">
+        <span className="absolute -top-1 -right-1 bg-secondary text-white rounded-full w-4 h-4 flex items-center justify-center text-[8px] font-medium leading-none">
           {count > 9 ? '9+' : count}
         </span>
       )}

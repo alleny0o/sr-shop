@@ -1,5 +1,5 @@
 import { Menu } from 'lucide-react';
-import { useAside } from '~/components/Aside';
+import { useAside } from '../aside';
 
 export function HeaderMenuMobileToggle() {
   const { open } = useAside();

@@ -60,6 +60,7 @@ async function loadCriticalData({ context, params, request }: LoaderFunctionArgs
   const [{ product }] = await Promise.all([
     storefront.query(PRODUCT_QUERY, {
       variables: { handle, selectedOptions: getSelectedProductOptions(request) },
+      cache: storefront.CacheShort(),
     }),
     // Add other queries here, so that they are loaded in parallel
   ]);
@@ -107,13 +108,13 @@ export default function Product() {
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const { title, descriptionHtml, media } = product;
+  const { media } = product;
 
   return (
     <section id="product-page" className="min-h-screen max-w-10xl mx-auto py-4 lg:px-8">
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 lg:gap-10">
         {/* Left Side - Media */}
-        <div className="col-span-1 lg:col-span-3 lg:sticky lg:top-18 lg:self-start lg:z-[1]">
+        <div className="col-span-1 lg:col-span-3">
           <ProductMedia media={media} selectedVariant={selectedVariant as ProductVariant} />
         </div>
         {/* Right Side - Details & CTA */}

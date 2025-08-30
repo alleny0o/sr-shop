@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import { useAside } from '~/components/Aside';
+import { useAside } from '../aside';
 
 export function SearchToggle() {
   const { open } = useAside();

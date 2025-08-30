@@ -1,189 +1,223 @@
 import { type MappedProductOptions } from '@shopify/hydrogen';
-import type { Maybe, ProductOptionValueSwatch } from '@shopify/hydrogen/storefront-api-types';
-import { AddToCartButton } from '../../../buttons/AddToCartButton';
-import { useAside } from '../../../Aside';
 import type { ProductFragment } from 'storefrontapi.generated';
-import { Link, useNavigate } from 'react-router';
+import { useForm } from 'react-hook-form';
+import { useState, useRef, useMemo, useCallback, memo } from 'react';
+import { ProductOptions } from './ProductOptions';
+import { PersonalizationForm } from '../../product-personalization/PersonalizationForm';
+import { PersonalizationData, AppliedPersonalizationData } from '../../product-personalization/types/personalization';
+import { getValidPersonalizationOptions } from '../../product-personalization/utils/personalization';
+import { getMetaFieldAsBoolean } from '~/utils/metafields';
+import { AddToCartButton } from '~/components/buttons/AddToCartButton';
+
+type FormState = 'idle' | 'form' | 'summary';
+type ErrorState = 'form-incomplete' | 'missing-required' | null;
+
+// Memoized ProductOptions wrapper to prevent re-renders
+const MemoizedProductOptions = memo(ProductOptions);
 
 export function ProductForm({
+  metafields,
   productOptions,
   selectedVariant,
 }: {
+  metafields: ProductFragment['metafields'];
   productOptions: MappedProductOptions[];
   selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
 }) {
-  const navigate = useNavigate();
-  const { open } = useAside();
+  const options = useMemo(() => getValidPersonalizationOptions(metafields), [metafields]);
+  const personalizationRequired = useMemo(
+    () => getMetaFieldAsBoolean(metafields, 'personalization_required'),
+    [metafields],
+  );
+
+  // Stock / availability
+  const isAvailable = selectedVariant?.availableForSale ?? false;
+
+  // Localized personalization state
+  const [formState, setFormState] = useState<FormState>('idle');
+  const [appliedData, setAppliedData] = useState<AppliedPersonalizationData | null>(null);
+  const [errorState, setErrorState] = useState<ErrorState>(null);
+  const scrollTargetRef = useRef<HTMLDivElement>(null);
+
+  // Form initialization with stable defaults - updated for new type system
+  const defaultValues = useMemo(
+    () => ({
+      type: options.length === 1 ? options[0].key : null,
+      text: null,
+      image: null,
+      position: null,
+      font: null,
+    }),
+    [options],
+  );
+
+  const form = useForm<PersonalizationData>({
+    defaultValues,
+    mode: 'all',  
+    reValidateMode: 'onBlur',
+    criteriaMode: 'all',
+    shouldFocusError: true,
+    shouldUnregister: false,
+    shouldUseNativeValidation: false,
+  });
+
+  // Build line item properties from applied personalization (SYNC)
+  // Note: Image attributes are now handled in AddToCartButton after upload
+  const buildLineItemProps = useCallback((data: AppliedPersonalizationData) => {
+    const properties: Record<string, string> = {};
+    
+    // Store the type as the actual type value (text, image, other)
+    if (data.type) properties['_Type'] = data.type;
+    if (data.text) properties['_Text'] = data.text;
+    if (data.font) properties['_Font'] = data.font;
+    if (data.position) properties['_Position'] = data.position;
+    // Image will be handled during upload in AddToCartButton
+    
+    return properties;
+  }, []);
+
+  // Only disable for stock, not for form state
+  const atcDisabled = useMemo(() => {
+    return !isAvailable; // Only out of stock blocks ATC
+  }, [isAvailable]);
+
+  // Button label reflects stock
+  const atcLabel = isAvailable ? 'Add to Cart' : 'Out of Stock';
+
+  // Build cart lines WITH attributes mapped from appliedData
+  const cartLines = useMemo(() => {
+    const attributes = appliedData
+      ? Object.entries(buildLineItemProps(appliedData)).map(([key, value]) => ({ key, value }))
+      : [];
+
+    return [
+      {
+        merchandiseId: selectedVariant?.id || '',
+        quantity: 1,
+        attributes,
+      },
+    ];
+  }, [selectedVariant, appliedData, buildLineItemProps]);
+
+  // Extract the image File from appliedData for passing to AddToCartButton
+  const personalizationImage = appliedData?.image || null;
+
+  // Derive error message from state combinations
+  const errorMessage = useMemo(() => {
+    // Only show form-incomplete error when actually in form state
+    if (errorState === 'form-incomplete' && formState === 'form') {
+      return 'Please complete or cancel your personalization';
+    }
+    
+    // Only show missing-required error when in idle state
+    if (errorState === 'missing-required' && formState === 'idle' && personalizationRequired) {
+      return 'This product requires personalization';
+    }
+    
+    return null;
+  }, [errorState, formState, personalizationRequired]);
+
+  // Reset personalization form after successful add to cart
+  const handleAfterAddToCart = useCallback(() => {
+    // Reset all personalization state back to initial
+    setFormState('idle');
+    setAppliedData(null);
+    setErrorState(null);
+    form.reset(defaultValues);
+  }, [form, defaultValues]);
+
+  // Validation before add to cart
+  const handleValidate = useCallback(() => {
+    // Check if form is open
+    if (formState === 'form') {
+      // Set error state (message will be derived automatically)
+      setErrorState('form-incomplete');
+      
+      // Smooth scroll to form
+      scrollTargetRef.current?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+      
+      return false; // Prevent add to cart
+    }
+    
+    // Check if personalization is required but not applied
+    if (personalizationRequired && !appliedData) {
+      // Set error state (message will be derived automatically)
+      setErrorState('missing-required');
+      
+      // Smooth scroll to form area
+      scrollTargetRef.current?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+      
+      return false; // Prevent add to cart
+    }
+    
+    return true; // Allow add to cart
+  }, [formState, personalizationRequired, appliedData]);
+
+  // No personalization options - simplified form (still respects stock)
+  if (options.length === 0) {
+    return (
+      <div className="space-y-6">
+        <MemoizedProductOptions productOptions={productOptions} />
+        <div className="h-px bg-soft" />
+        <AddToCartButton
+          lines={[{ merchandiseId: selectedVariant?.id || '', quantity: 1 }]}
+          disabled={!isAvailable}
+          className="w-full bg-atc-button-bg text-atc-button-text p-4 transition-colors duration-0 hover:bg-atc-button-hover cursor-pointer uppercase rounded-none"
+          selectedVariant={selectedVariant}
+          afterAddToCart={handleAfterAddToCart}
+        >
+          {isAvailable ? 'Add to Cart' : 'Out of Stock'}
+        </AddToCartButton>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {productOptions.map((option, index) => {
-        // If there is only a single value in the option values, don't display the option
-        if (option.optionValues.length === 1) return null;
+      <MemoizedProductOptions productOptions={productOptions} />
 
-        // Get the selected value name for display
-        const selectedValue = option.optionValues.find(v => v.selected)?.name || '';
+      <div className="h-px bg-soft" />
 
-        return (
-          <div key={option.name}>
-            {/* Option Header */}
-            <div className="flex flex-row space-x-2 mb-3.5">
-              <h3 className="text-sm font-medium text-primary font-inter">{option.name}:</h3>
-              <p className="text-sm text-secondary font-inter">{selectedValue}</p>
-            </div>
-
-            {/* Option Values */}
-            <div className="flex flex-wrap gap-2">
-              {option.optionValues.map(value => {
-                const { name, handle, variantUriQuery, selected, available, exists, isDifferentProduct, swatch } =
-                  value;
-
-                // Determine the type for this specific value
-                const isImageValue = swatch?.image?.previewImage?.url;
-                const isColorValue = swatch?.color;
-
-                const baseClasses = `
-                  transition-all duration-150 ease-in-out font-inter relative cursor-pointer group
-                `.trim();
-
-                const colorClasses = `
-                  ${baseClasses}
-                  w-9 h-9 rounded-full border-1 flex items-center justify-center
-                  ${selected ? 'border-strong hover:border-strong' : 'border-soft hover:border-strong'}
-                `.trim();
-
-                const imageClasses = `
-                  ${baseClasses}
-                  w-14 h-14 rounded-none border-1 overflow-hidden
-                  ${selected ? 'border-strong hover:border-strong' : 'border-soft hover:border-strong'}
-                `.trim();
-
-                const defaultClasses = `
-                  ${baseClasses}
-                  px-3 py-2 text-sm font-light text-center font-inter
-                  ${
-                    selected
-                      ? 'text-primary border-1 border-strong hover:border-strong'
-                      : 'text-primary border-1 border-soft hover:border-strong'
-                  }
-                `.trim();
-
-                // Choose classes based on value type
-                const valueClasses = isImageValue ? imageClasses : isColorValue ? colorClasses : defaultClasses;
-
-                if (isDifferentProduct) {
-                  return (
-                    <Link
-                      key={option.name + name}
-                      prefetch="intent"
-                      preventScrollReset
-                      replace
-                      to={`/products/${handle}?${variantUriQuery}`}
-                      className={valueClasses}
-                      title={name}
-                    >
-                      <ProductOptionSwatch
-                        swatch={swatch}
-                        name={name}
-                        isColor={!!isColorValue}
-                        isImage={!!isImageValue}
-                        available={available}
-                        selected={selected}
-                      />
-                    </Link>
-                  );
-                } else {
-                  return (
-                    <button
-                      type="button"
-                      key={option.name + name}
-                      className={valueClasses}
-                      disabled={false}
-                      title={name}
-                      onClick={() => {
-                        if (!selected && exists) {
-                          navigate(`?${variantUriQuery}`, {
-                            replace: true,
-                            preventScrollReset: true,
-                          });
-                        }
-                      }}
-                    >
-                      <ProductOptionSwatch
-                        swatch={swatch}
-                        name={name}
-                        isColor={!!isColorValue}
-                        isImage={!!isImageValue}
-                        available={available}
-                        selected={selected}
-                      />
-                    </button>
-                  );
-                }
-              })}
-            </div>
-          </div>
-        );
-      })}
-
-    </div>
-  );
-}
-
-function ProductOptionSwatch({
-  swatch,
-  name,
-  isColor = false,
-  isImage = false,
-  available = true,
-  selected = false,
-}: {
-  swatch?: Maybe<ProductOptionValueSwatch> | undefined;
-  name: string;
-  isColor?: boolean;
-  isImage?: boolean;
-  available?: boolean;
-  selected?: boolean;
-}) {
-  const image = swatch?.image?.previewImage?.url;
-  const color = swatch?.color;
-
-  if (isImage && image) {
-    return (
-      <div className="relative w-full h-full">
-        <img src={image} alt={name} className="w-full h-full object-cover !rounded-none" />
-        {!available && (
-          <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-            <div
-              className={`w-full h-[1px] transform rotate-45 transition-colors duration-150 ${selected ? 'bg-strong' : 'bg-soft group-hover:bg-strong group-active:bg-strong'}`}
-            ></div>
+      <div ref={scrollTargetRef}>
+        <PersonalizationForm
+          options={options}
+          form={form}
+          formState={formState}
+          setFormState={setFormState}
+          appliedData={appliedData}
+          setAppliedData={setAppliedData}
+          setErrorState={setErrorState}
+          errorState={errorState}
+          personalizationRequired={personalizationRequired}
+        />
+        
+        {/* Error message display */}
+        {errorMessage && (
+          <div className="mt-2 text-sm text-error-text font-inter animate-in fade-in duration-200">
+            {errorMessage}
           </div>
         )}
       </div>
-    );
-  }
 
-  if (isColor && color) {
-    return (
-      <div className="relative w-full h-full rounded-full flex items-center justify-center">
-        <div className="w-7 h-7 rounded-full" style={{ backgroundColor: color }} aria-label={name} />
-        {!available && (
-          <div className="absolute inset-0 bg-white/50 rounded-full flex items-center justify-center">
-            <div
-              className={`w-full h-[1px] transform rotate-45 transition-colors duration-150 ${selected ? 'bg-strong' : 'bg-soft group-hover:bg-strong group-active:bg-strong'}`}
-            ></div>
-          </div>
-        )}
-      </div>
-    );
-  }
+      <div className="h-px bg-soft" />
 
-  // For non-color, non-image options, just return the name with overlay
-  return (
-    <div className="relative w-full h-full">
-      <span className={`block ${!available ? 'line-through opacity-50' : ''}`}>
-        {name}
-      </span>
+      <AddToCartButton
+        lines={cartLines}
+        disabled={atcDisabled}
+        className="uppercase rounded-none"
+        personalizationImage={personalizationImage}
+        selectedVariant={selectedVariant}
+        afterAddToCart={handleAfterAddToCart}
+        onValidate={handleValidate}
+      >
+        {atcLabel}
+      </AddToCartButton>
     </div>
   );
 }

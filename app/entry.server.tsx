@@ -24,6 +24,16 @@ export default async function handleRequest(
     mediaSrc: [
       'https://*.myshopify.com',
       'https://cdn.shopify.com',
+      'blob:',
+      'data:',
+    ],
+    // Explicitly set imgSrc to allow blob URLs for image previews
+    imgSrc: [
+      "'self'",
+      'https://*.myshopify.com',
+      'https://cdn.shopify.com',
+      'blob:',
+      'data:', 
     ],
   });
 

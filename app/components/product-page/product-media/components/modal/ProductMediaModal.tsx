@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ProductQuery, ProductVariantFragment } from 'storefrontapi.generated';
+import { ProductQuery } from 'storefrontapi.generated';
 import { ModalMediaRenderer } from '../media/ModalMediaRenderer';
-import { X } from 'lucide-react';
 import { useImagePan } from '../../hooks/useImagePan';
+import { CloseButton } from '~/components/buttons/CloseButton';
 
 type ProductMediaModalProps = {
   isOpen: boolean;
@@ -72,15 +72,7 @@ export const ProductMediaModal: React.FC<ProductMediaModalProps> = props => {
           </span>
         </div>
 
-        <button
-          onClick={onClose}
-          className="group p-2.25 flex items-center justify-center bg-pastel-yellow-light border border-gray-300 shadow-sm rounded-none cursor-pointer transition-all duration-200"
-        >
-          <X
-            className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 transition-all duration-200 group-hover:scale-125 text-black"
-            strokeWidth={1.2}
-          />
-        </button>
+        <CloseButton onClose={onClose} />
       </div>
 
       {/* Image content with pan */}

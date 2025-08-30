@@ -7,3 +7,10 @@ node_modules
 .env
 .shopify
 .react-router
+package-lock.json
+
+# Additional suggestions
+*.log
+.DS_Store
+.vscode/
+.idea/
