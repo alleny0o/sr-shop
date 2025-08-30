@@ -80,9 +80,9 @@ export function Aside({ children, heading, type, config }: AsideProps) {
     >
       <AsideBackdrop onClose={handleClose} />
 
-      <aside className={getAsideClasses(config, expanded, closing)} style={{ backgroundColor: 'white' }}>
+      <aside className={cn(getAsideClasses(config, expanded, closing), 'flex flex-col')} style={{ backgroundColor: 'white' }}>
         <AsideHeader type={type} heading={heading} onClose={handleClose} />
-        <main className="m-4">{children}</main>
+        <main className="flex-1 m-6">{children}</main>
       </aside>
     </div>
   );

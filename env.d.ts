@@ -22,7 +22,7 @@ declare global {
     // The AWS region where your resources (S3, Rekognition, etc.) are hosted.
     AWS_REGION: string;
   
-    // IAM user credentials for the 'sr-laserwork-uploader' user.
+    // IAM user credentials for the user.
     AWS_ACCESS_KEY_ID: string;
     AWS_SECRET_ACCESS_KEY: string;
   

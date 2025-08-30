@@ -9,8 +9,8 @@ import { getValidPersonalizationOptions } from '../../product-personalization/ut
 import { getMetaFieldAsBoolean } from '~/utils/metafields';
 import { AddToCartButton } from '~/components/buttons/AddToCartButton';
 
-type FormState = 'idle' | 'form' | 'summary';
-type ErrorState = 'form-incomplete' | 'missing-required' | null;
+export type FormState = 'idle' | 'form' | 'summary';
+export type ErrorState = 'form-incomplete' | 'missing-required' | null;
 
 // Memoized ProductOptions wrapper to prevent re-renders
 const MemoizedProductOptions = memo(ProductOptions);

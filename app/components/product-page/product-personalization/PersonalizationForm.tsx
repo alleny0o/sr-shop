@@ -10,8 +10,8 @@ import { ImageField } from './components/ImageField';
 import { PersonalizationSummary } from './components/PersonalizationSummary';
 import { FormActions } from './components/FormActions';
 
-type FormState = 'idle' | 'form' | 'summary';
-type ErrorState = 'form-incomplete' | 'missing-required' | null;
+import { FormState } from '../product-details/components/ProductForm';
+import { ErrorState } from '../product-details/components/ProductForm';
 
 type PersonalizationFormProps = {
   options: ParsedPersonalization[];

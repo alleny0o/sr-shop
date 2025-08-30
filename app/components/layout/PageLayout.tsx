@@ -4,7 +4,7 @@ import type { CartApiQueryFragment, FooterQuery, HeaderQuery } from 'storefronta
 import { AsideComponent } from '~/components/aside';
 import { Footer } from '~/components/footer/Footer';
 import { Header } from '~/components/header/Header';
-import { CartMain } from '~/components/CartMain';
+import { CartMain } from '../cart/CartMain';
 import { HeaderMenu } from '~/components/header/HeaderMenu';
 import { SEARCH_ENDPOINT, SearchFormPredictive } from '~/components/SearchFormPredictive';
 import { SearchResultsPredictive } from '~/components/SearchResultsPredictive';

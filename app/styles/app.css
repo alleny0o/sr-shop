@@ -35,16 +35,6 @@
 * components/Cart
 * --------------------------------------------------
 */
-.cart-main {
-  height: 100%;
-  max-height: calc(100vh - var(--cart-aside-summary-height));
-  overflow-y: auto;
-  width: auto;
-}
-
-.cart-main.with-discount {
-  max-height: calc(100vh - var(--cart-aside-summary-height-with-discount));
-}
 
 .cart-line {
   display: flex;
