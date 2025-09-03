@@ -1,10 +1,17 @@
-node_modules
-/.cache
-/build
-/dist
-/public/build
-/.mf
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+npm-debug.log
+pnpm-debug.log
+
+# Env
 .env
-.shopify
-.react-router
-package-lock.json
+.env.local
+.env.development
+.env.production
+
+# Build
+dist/
+.cache/
